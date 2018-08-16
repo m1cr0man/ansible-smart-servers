@@ -1,0 +1,5 @@
+---
+- name: OpenJDK installed
+  pkgin:
+    name: openjdk8
+    state: present
