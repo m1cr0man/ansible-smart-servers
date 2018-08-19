@@ -3,3 +3,19 @@
   pkgin:
     name: openjdk8
     state: present
+
+- name: Modpack downloaded
+  register: modpack
+  get_url:
+    url: {{ modpack }}
+    dest: /opt/minecraft/
+
+- name: Snapshot server
+  # TODO figure out how volumes work
+
+- name: Unpack modpack
+  when: modpack is changed
+  unarchive:
+    src: "/opt/minecraft/{{ modpack | basename }}"
+    dest: /opt/minecraft/
+    remote_src: true

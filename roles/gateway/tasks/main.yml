@@ -1,0 +1,22 @@
+---
+- name: IPV4 forwarding enabled
+  shell: routeadm -u -e ipv4-forwarding
+
+- name: NAT rules
+  register: nat_rules
+  template:
+    src: templates/ipnat.conf.j2
+    dest: /etc/ipf/ipnat.conf
+    verify: 'svcadm refresh ipfilter'
+    backup: true
+    mode: 0644
+
+- name: Route service enabled
+  service:
+    name: route
+    enabled: true
+
+- name: IPFilter service enabled
+  service:
+    name: ipfilter
+    enabled: true

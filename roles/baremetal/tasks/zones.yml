@@ -1,0 +1,26 @@
+---
+- name: Zones deployed
+  register: zones_deployed
+  loop: "{{ groups.all | sort }}"
+  loop_control:
+    label: "{{ item.inventory_hostname }}"
+  when: item.is_zone
+  vars:
+    itemvars: "{{ hostvars[item] }}"
+    default_nics:
+      - interface: int0
+        nic_tag: stub0
+        ip: "{{ itemvars.address }}"
+        netmask: 255.255.255.0
+        gateway: "{{ hostvars.gateway.address }}"
+  vmadm:
+    state: present
+    brand: joyent
+    dataset_uuid: "{{ itemvars.vmadm_dataset_uuid }}"
+    alias: "{{ itemvars.inventory_hostname }}"
+    hostname: "{{ itemvars.inventory_hostname }}"
+    default_gateway: "{{ hostvars.gateway.address }}"
+    resolvers: "{{ itemvars.vmadm_resolvers }}"
+    nics: "{{ default_nics }} + {{ vmadm_nics }}"
+    max_physical_memory: "{{ itemvars.vmadm_ram }}"
+    cpu_shares: "{{ itemvars.vmadm_cpu }}"

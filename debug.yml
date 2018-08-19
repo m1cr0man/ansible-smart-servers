@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  vars:
+    itemvars: "{{ hostvars[item] }}"
+    is_zone: "{{ itemvars.zone | d(False) }}"
+    gateway_extnic: ext0
+  tasks:
+    - debug: "var=is_zone"
+      # with_inventory_hostnames: { all: {} }
+      # with_items: "{{ groups['all'] }}"
+      loop: "{{ query('inventory_hostnames', 'all:!gateway') | sort }}"
+      # loop: "{{ groups['all'] | map('attr', hostvars) | list }}"
+      # loop_control:
+      #   label: "{{ item.inventory_hostname }}"
+    - template:
+        src: roles/gateway/templates/ipnat.conf.j2
+        dest: /tmp/ipnat.conf
+      # verify: 'ipnat -l'
+      # backup: true
+      # mode: 0644

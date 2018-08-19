@@ -1,0 +1,21 @@
+---
+- name: Configure bare metal
+  hosts: baremetal
+  gather_facts: false
+  roles:
+    - role: baremetal
+    - role: hostsfile
+
+- name: Configure gateway
+  hosts: gateway
+  roles:
+    - role: zone
+    - role: hostsfile
+    - role: gateway
+
+- name: Configure Minecraft servers
+  hosts: minecraft
+  roles:
+    - role: zone
+    - role: hostsfile
+    - role: minecraft

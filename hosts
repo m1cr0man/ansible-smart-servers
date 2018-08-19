@@ -1,0 +1,12 @@
+gelandewagen ansible_host=144.76.44.123
+
+gateway ansible_host=144.76.44.62 ansible_ssh_port=2201 address=10.0.0.1
+
+logstash ansible_host=144.76.44.62 ansible_ssh_port=2210 address=10.0.0.2
+
+metrics ansible_host=144.76.44.62 ansible_ssh_port=2211 address=10.0.0.3
+
+blog ansible_host=144.76.44.62 ansible_ssh_port=2220 address=10.0.0.10
+
+[minecraft]
+blockstaliga ansible_host=144.76.44.62 ansible_ssh_port=2221 address=10.0.0.11

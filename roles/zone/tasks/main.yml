@@ -1,0 +1,5 @@
+---
+- name: Packages updated
+  pkgin:
+    update_cache: yes
+    full_upgrade: yes

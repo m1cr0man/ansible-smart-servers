@@ -1,0 +1,8 @@
+{% for host in query('inventory_hostnames', 'all:!gateway') | sort -%}
+{% if hostvars[host].is_zone -%}
+map {{ gateway_extnic }} {{ hostvars[host].address }}/32 -> 0/32
+{% for port in hostvars[host].exposed_ports | sort | default([]) %}
+    rdr {{ gateway_extnic }} 0.0.0.0/0 port {{ port.src }} -> {{ hostvars[host].address }} port {{ port.dest }}
+{% endfor %}
+{%- endif %}
+{% endfor %}

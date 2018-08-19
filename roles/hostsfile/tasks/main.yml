@@ -1,0 +1,8 @@
+---
+- name: Hosts file
+  template:
+    src: templates/hosts.j2
+    dest: /etc/hosts
+    verify: 'ping localhost'
+    backup: true
+    mode: 0644
