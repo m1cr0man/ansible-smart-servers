@@ -1,6 +1,7 @@
 {% for host in query('inventory_hostnames', 'all:!gateway') | sort -%}
 {% if hostvars[host].is_zone -%}
 map {{ gateway_extnic }} {{ hostvars[host].address }}/32 -> 0/32
+    rdr {{ gateway_extnic }} 0.0.0.0/0 port {{ hostvars[host].ansible_ssh_port }} -> {{ hostvars[host].address }} port 22
 {% for port in hostvars[host].exposed_ports | sort %}
     rdr {{ gateway_extnic }} 0.0.0.0/0 port {{ port.src }} -> {{ hostvars[host].address }} port {{ port.dest }}
 {% endfor %}

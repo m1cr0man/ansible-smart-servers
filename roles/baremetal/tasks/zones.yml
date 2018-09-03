@@ -1,26 +1,34 @@
 ---
+- name: Secrets loaded
+  include_vars: secrets.yml
+
 - name: Zones deployed
   register: zones_deployed
   loop: "{{ groups.all | sort }}"
   loop_control:
-    label: "{{ item.inventory_hostname }}"
-  when: item.is_zone
+    label: "{{ itemvars.inventory_hostname }}"
+  when: itemvars.is_zone
   vars:
     itemvars: "{{ hostvars[item] }}"
     default_nics:
-      - interface: int0
+      - interface: net0
         nic_tag: stub0
         ip: "{{ itemvars.address }}"
         netmask: 255.255.255.0
         gateway: "{{ hostvars.gateway.address }}"
+        allow_ip_spoofing: yes
   vmadm:
     state: present
     brand: joyent
-    dataset_uuid: "{{ itemvars.vmadm_dataset_uuid }}"
+    autoboot: yes
+    zfs_root_compression: lz4
+    image_uuid: "{{ itemvars.vmadm_image_uuid }}"
     alias: "{{ itemvars.inventory_hostname }}"
     hostname: "{{ itemvars.inventory_hostname }}"
-    default_gateway: "{{ hostvars.gateway.address }}"
     resolvers: "{{ itemvars.vmadm_resolvers }}"
-    nics: "{{ default_nics }} + {{ vmadm_nics }}"
+    nics: "{{ default_nics }} + {{ itemvars.vmadm_nics }}"
     max_physical_memory: "{{ itemvars.vmadm_ram }}"
     cpu_shares: "{{ itemvars.vmadm_cpu }}"
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_authkeys }}"
+      user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"

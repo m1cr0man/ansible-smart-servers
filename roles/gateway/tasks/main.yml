@@ -7,16 +7,21 @@
   template:
     src: templates/ipnat.conf.j2
     dest: /etc/ipf/ipnat.conf
-    verify: 'svcadm refresh ipfilter'
-    backup: true
+    backup: yes
     mode: 0644
 
 - name: Route service enabled
   service:
     name: route
-    enabled: true
+    enabled: yes
 
 - name: IPFilter service enabled
   service:
     name: ipfilter
-    enabled: true
+    enabled: yes
+
+- name: IPFilter rules loaded
+  service:
+    name: ipfilter
+    state: reloaded
+  when: nat_rules.changed

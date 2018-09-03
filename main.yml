@@ -1,10 +1,21 @@
 ---
+- name: Install python on bare metal
+  hosts: baremetal
+  gather_facts: no
+  roles:
+    - role: python
+
 - name: Configure bare metal
   hosts: baremetal
-  gather_facts: false
   roles:
     - role: baremetal
     - role: hostsfile
+
+- name: Install python on gateway
+  hosts: gateway
+  gather_facts: no
+  roles:
+    - role: python
 
 - name: Configure gateway
   hosts: gateway
@@ -12,6 +23,18 @@
     - role: zone
     - role: hostsfile
     - role: gateway
+
+- name: Install python on zones
+  hosts: all:!baremetal:!gateway
+  gather_facts: no
+  roles:
+    - role: python
+
+- name: Basic zone config
+  hosts: all:!baremetal:!gateway
+  roles:
+    - role: zone
+    - role: hostsfile
 
 - name: Configure Minecraft servers
   hosts: minecraft

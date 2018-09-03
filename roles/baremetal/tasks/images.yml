@@ -1,0 +1,10 @@
+---
+- name: Images imported
+  loop: "{{ groups.all | sort }}"
+  vars:
+    uuid: "{{ hostvars[item].vmadm_image_uuid }}"
+  loop_control:
+    label: "{{ uuid }}"
+  imgadm:
+    uuid: "{{ uuid }}"
+    state: imported

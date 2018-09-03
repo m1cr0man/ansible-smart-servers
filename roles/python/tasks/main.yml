@@ -1,0 +1,30 @@
+---
+- name: Host accessible
+  wait_for_connection:
+
+- name: Python already installed
+  register: python_bin
+  raw: "which {{ ansible_python_interpreter }}"
+  ignore_errors: yes
+
+- name: Pkgin installed
+  register: pkgin_bin
+  raw: PATH=/opt/tools/bin:$PATH which pkgin
+  ignore_errors: yes
+  when: python_bin.rc != 0
+
+- name: Pkgin downloaded
+  raw: cd /var/tmp && curl -kO https://pkgsrc.joyent.com/packages/SmartOS/bootstrap/bootstrap-2018Q2-tools.tar.gz
+  when: python_bin.rc != 0 and pkgin_bin.rc != 0
+
+- name: Pkgin unpacked
+  raw: tar -zxpf /var/tmp/bootstrap-2018Q2-tools.tar.gz -C /
+  when: python_bin.rc != 0 and pkgin_bin.rc != 0
+
+- name: Package list updated
+  raw: PATH=/opt/tools/bin:$PATH pkgin -y update
+  when: python_bin.rc != 0
+
+- name: Python installed
+  raw: PATH=/opt/tools/bin:$PATH pkgin -y install python27-2.7.15nb1
+  when: python_bin.rc != 0

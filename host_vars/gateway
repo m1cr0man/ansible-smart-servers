@@ -1,8 +1,8 @@
 ---
 is_zone: yes
-gateway_extnic: ext0
+gateway_extnic: net1
 vmadm_nics:
-  - interface: ext0
+  - interface: net1
     nic_tag: admin
     mac: 00:50:56:00:ad:d9
     ip: 144.76.44.62
