@@ -1,0 +1,7 @@
+---
+is_zone: yes
+vmadm_ram: 768
+vmadm_cpu: 25
+exposed_ports:
+  - src: 8080
+    dest: 3000

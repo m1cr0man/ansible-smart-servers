@@ -1,0 +1,39 @@
+---
+- name: node installed
+  pkgin:
+    name: nodejs
+    state: present
+
+- name: M1cr0blog updated
+  register: m1cr0blog_install
+  npm:
+    name: m1cr0blog
+    global: yes
+    state: latest
+
+- name: SMF copied
+  register: m1cr0blog_smf_file
+  copy:
+    src: files/m1cr0blog.xml
+    dest: /opt/custom/smf/
+    mode: 0644
+
+- name: SMF installed
+  register: m1cr0blog_smf_install
+  command: svccfg import m1cr0blog.xml
+  args:
+    chdir: /opt/custom/smf/
+    creates: /var/svc/manifest/site/m1cr0blog.xml
+  when: m1cr0blog_smf_file.changed
+
+- name: Service loaded
+  service:
+    name: m1cr0blog
+    enabled: yes
+  when: m1cr0blog_smf_install.changed
+
+- name: Service restarted
+  service:
+    name: m1cr0blog
+    state: restarted
+  when: m1cr0blog_install.changed and m1cr0blog_smf_install.ok

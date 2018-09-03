@@ -36,6 +36,11 @@
     - role: zone
     - role: hostsfile
 
+- name: Configure blog
+  hosts: blog
+  roles:
+    - role: blog
+
 - name: Configure Minecraft servers
   hosts: minecraft
   roles:
