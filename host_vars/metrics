@@ -1,0 +1,9 @@
+---
+is_zone: yes
+vmadm_ram: 1024
+vmadm_cpu: 50
+exposed_ports:
+  - src: 8088
+    dest: 8088
+  - src: 8086
+    dest: 8086

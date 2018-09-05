@@ -2,12 +2,24 @@
 - name: Secrets loaded
   include_vars: secrets.yml
 
-- name: Compression and dedup enabled
+- name: ZFS compression and dedup enabled
   zfs:
     name: zones
     extra_zfs_properties:
       compress: lz4
       dedup: yes
+    state: present
+
+- name: ZFS dedup disabled on swap
+  zfs:
+    name: zones/swap
+    extra_zfs_properties:
+      dedup: no
+    state: present
+
+- name: ZFS global data dataset created
+  zfs:
+    name: "{{ global_data_dataset }}"
     state: present
 
 - name: etherstub enabled

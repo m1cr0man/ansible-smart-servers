@@ -1,0 +1,48 @@
+---
+- name: Influx installed
+  register: influx_bin
+  stat:
+    path: /opt/local/bin/influxd
+
+- include: influx_build.yml
+  delegate_to: builder
+  vars:
+    gopath: /opt/build/influx
+  environment:
+    GOPATH: "{{ gopath }}"
+    GOBIN: "{{ gopath }}/bin"
+  when: not influx_bin.stat.exists
+
+- name: Config copied
+  register: metrics_config_file
+  template:
+    src: templates/influxd.toml.j2
+    dest: /opt/local/etc/influxd.toml
+    mode: 0644
+
+- name: SMF copied
+  register: metrics_smf_file
+  copy:
+    src: files/influxd.xml
+    dest: /opt/custom/smf/
+    mode: 0644
+
+- name: SMF installed
+  register: metrics_smf_install
+  command: svccfg import influxd.xml
+  args:
+    chdir: /opt/custom/smf/
+    creates: /var/svc/manifest/site/influxd.xml
+  when: metrics_smf_file is changed
+
+- name: Service loaded
+  service:
+    name: influxd
+    enabled: yes
+  when: metrics_smf_install is changed
+
+- name: Service restarted
+  service:
+    name: influxd
+    state: restarted
+  when: metrics_smf_install is not changed and metrics_config_file is changed

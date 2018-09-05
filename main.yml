@@ -36,6 +36,16 @@
     - role: zone
     - role: hostsfile
 
+- name: Configure builder
+  hosts: builder
+  roles:
+    - role: rsyncd
+
+- name: Configure metrics store
+  hosts: metrics
+  roles:
+    - role: influx
+
 - name: Configure blog
   hosts: blog
   roles:

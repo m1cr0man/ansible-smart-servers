@@ -1,0 +1,45 @@
+---
+- name: Gopath exists
+  file:
+    path: "{{ gopath }}"
+    state: directory
+
+- name: Go installed
+  pkgin:
+    name: go
+    state: present
+
+- name: Git installed
+  pkgin:
+    name: git
+    state: present
+
+- name: Influx downloaded
+  command: go get github.com/influxdata/influxdb
+  args:
+    creates: "{{ gopath }}/src/github.com/influxdata/influxdb"
+
+- name: Dependencies downloaded
+  command: go get ./...
+  args:
+    chdir: "{{ gopath }}/src/github.com/influxdata"
+    creates: "{{ gopath }}/src/github.com/influxdata/influxql"
+
+- name: Influx built
+  command: go install ./...
+  args:
+    chdir: "{{ gopath }}/src/github.com/influxdata"
+    creates: "{{ gopath }}/bin/influxd"
+
+- name: Binaries copied
+  delegate_to: metrics
+  synchronize:
+    mode: pull
+    src: rsync://builder/opt/build/influx/bin/
+    dest: /opt/local/bin
+  when: not influx_bin.stat.exists
+
+- name: Gopath deleted
+  file:
+    path: "{{ gopath }}"
+    state: absent

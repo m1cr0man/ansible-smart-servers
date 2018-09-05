@@ -1,0 +1,27 @@
+---
+- name: Config copied
+  copy:
+    src: files/rsyncd.conf
+    dest: /etc/
+    mode: 0644
+
+- name: SMF copied
+  register: rsyncd_smf_file
+  copy:
+    src: files/rsyncd.xml
+    dest: /opt/custom/smf/
+    mode: 0644
+
+- name: SMF installed
+  register: rsyncd_smf_install
+  command: svccfg import rsyncd.xml
+  args:
+    chdir: /opt/custom/smf/
+    creates: /var/svc/manifest/site/rsyncd.xml
+  when: rsyncd_smf_file.changed
+
+- name: Service loaded
+  service:
+    name: rsyncd
+    enabled: yes
+  when: rsyncd_smf_install.changed
