@@ -38,8 +38,3 @@
     src: rsync://builder/opt/build/influx/bin/
     dest: /opt/local/bin
   when: not influx_bin.stat.exists
-
-- name: Gopath deleted
-  file:
-    path: "{{ gopath }}"
-    state: absent

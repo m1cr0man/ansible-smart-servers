@@ -1,5 +1,5 @@
 reporting-disabled = false
-bind-address = "{{ address }}:8088"
+bind-address = "0.0.0.0:8088"
 
 [meta]
   dir = "/zones/data/metrics/meta"
@@ -59,7 +59,7 @@ bind-address = "{{ address }}:8088"
 
 [http]
   enabled = true
-  bind-address = "{{ address }}:8086"
+  bind-address = "0.0.0.0:8086"
   auth-enabled = false
   log-enabled = true
   suppress-write-log = false

@@ -45,6 +45,7 @@
   hosts: metrics
   roles:
     - role: influx
+    - role: chronograf
 
 - name: Configure blog
   hosts: blog

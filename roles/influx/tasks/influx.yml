@@ -6,8 +6,6 @@
 
 - include: influx_build.yml
   delegate_to: builder
-  vars:
-    gopath: /opt/build/influx
   environment:
     GOPATH: "{{ gopath }}"
     GOBIN: "{{ gopath }}/bin"
@@ -15,9 +13,9 @@
 
 - name: Config copied
   register: metrics_config_file
-  template:
-    src: templates/influxd.toml.j2
-    dest: /opt/local/etc/influxd.toml
+  copy:
+    src: files/influxd.toml
+    dest: /opt/local/etc/
     mode: 0644
 
 - name: SMF copied

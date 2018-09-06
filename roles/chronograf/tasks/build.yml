@@ -1,0 +1,61 @@
+---
+- name: Gopath exists
+  file:
+    path: "{{ gopath }}"
+    state: directory
+
+- name: Go installed
+  pkgin:
+    name: go
+    state: present
+
+- name: Git installed
+  pkgin:
+    name: git
+    state: present
+
+- name: GCC installed
+  pkgin:
+    name: gcc49
+    state: present
+
+- name: Gmake installed
+  pkgin:
+    name: gmake
+    state: present
+
+- name: Yarn installed
+  npm:
+    name: yarn
+    global: yes
+    state: present
+
+- name: Chronograf downloaded
+  command: go get github.com/influxdata/chronograf
+  args:
+    creates: "{{ gopath }}/src/github.com/influxdata/chronograf"
+
+- name: Chronograf built
+  command: make 2>&1 | tee chronograf_build.log
+  args:
+    chdir: "{{ gopath }}/src/github.com/influxdata/chronograf"
+    creates: "{{ gopath }}/pkg/solaris_amd64/github.com/influxdata/chronograf.a"
+
+- name: Chronograf installed
+  command: go install github.com/influxdata/chronograf/cmd/chronograf
+  args:
+    creates: "{{ gopath }}/bin/chronograf"
+
+- name: Binaries copied
+  delegate_to: metrics
+  synchronize:
+    mode: pull
+    src: "rsync://builder{{ gopath }}/bin/chronograf"
+    dest: /opt/local/bin/
+
+- name: Canned dashboards copied
+  delegate_to: metrics
+  synchronize:
+    mode: pull
+    src: "rsync://builder{{ gopath }}/src/github.com/influxdata/chronograf/canned"
+    dest: /opt/local/share/chronograf/

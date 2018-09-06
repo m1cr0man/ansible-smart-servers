@@ -10,3 +10,4 @@ vmadm_ram: 256
 vmadm_cpu: 10
 exposed_ports: []
 global_data_dataset: zones/data
+gopath: /opt/build/go
