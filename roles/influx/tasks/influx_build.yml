@@ -35,6 +35,6 @@
   delegate_to: metrics
   synchronize:
     mode: pull
-    src: rsync://builder/opt/build/influx/bin/
-    dest: /opt/local/bin
+    src: "rsync://builder{{ gopath }}/bin/influx*"
+    dest: /opt/local/bin/
   when: not influx_bin.stat.exists
