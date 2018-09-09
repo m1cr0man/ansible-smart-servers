@@ -1,0 +1,24 @@
+pass out all keep state
+block in all
+block return-rst in log first proto tcp all
+block return-icmp(host-unr) in log proto udp all
+pass out quick proto udp from any to any port = 53 keep state
+
+pass in quick on lo0 all
+pass out quick on lo0 all
+
+pass in quick on gw0 all
+pass out quick on gw0 all
+
+pass out quick proto icmp all
+pass in quick proto icmp all
+
+pass in quick proto tcp from any to any port = 22 flags S/FSRPAU keep frags
+{% for host in query('inventory_hostnames', 'all') | sort -%}
+{% if hostvars[host].is_zone -%}
+pass in quick proto tcp from any to any port = {{ hostvars[host].ansible_ssh_port }} flags S/FSRPAU keep frags
+{% for port in hostvars[host].exposed_ports | sort %}
+pass in quick from any to any port = {{ port.src }}
+{% endfor %}
+{%- endif %}
+{% endfor %}

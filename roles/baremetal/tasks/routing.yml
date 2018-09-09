@@ -1,0 +1,55 @@
+---
+- name: Routing config directory
+  file:
+    path: /opt/custom/routing
+    state: directory
+
+- name: NAT rules
+  register: nat_rules
+  template:
+    src: templates/ipnat.conf.j2
+    dest: /opt/custom/routing/ipnat.conf
+    backup: yes
+    mode: 0644
+
+- name: Firewall rules
+  register: fw_rules
+  template:
+    src: templates/ipf.conf.j2
+    dest: /opt/custom/routing/ipf.conf
+    backup: yes
+    mode: 0644
+
+- name: Service script copied
+  register: routing_script_file
+  template:
+    src: templates/setup-routing.sh.j2
+    dest: /opt/custom/bin/setup-routing.sh
+    mode: 0744
+
+- name: SMF copied
+  register: routing_smf_file
+  copy:
+    src: files/setup-routing.xml
+    dest: /opt/custom/smf/
+    mode: 0644
+
+- name: SMF installed
+  register: routing_smf_install
+  command: svccfg import setup-routing.xml
+  args:
+    chdir: /opt/custom/smf/
+    creates: /var/svc/manifest/site/setup-routing.xml
+  when: routing_smf_file is changed
+
+- name: Service loaded
+  service:
+    name: setup-routing
+    enabled: yes
+  when: routing_smf_install is changed
+
+- name: Service restarted
+  service:
+    name: setup-routing
+    state: restarted
+  when: routing_smf_install is not changed and ( nat_rules is changed or fw_rules is changed or routing_script_file is changed )

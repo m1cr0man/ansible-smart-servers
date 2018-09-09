@@ -29,9 +29,28 @@
     regexp: '^etherstub='
     line: 'etherstub=stub0'
 
+- name: keymap set
+  register: keymap
+  lineinfile:
+    path: /usbkey/config
+    regexp: '^default_keymap='
+    line: 'default_keymap=uk'
+
+- name: search domain set
+  register: keymap
+  lineinfile:
+    path: /usbkey/config
+    regexp: '^dns_domain='
+    line: 'dns_domain='
+
 - name: Config folder created
   file:
     path: /usbkey/config.inc/
+    state: directory
+
+- name: SMF folder created
+  file:
+    path: /opt/custom/smf
     state: directory
 
 - name: authorized_keys file added
@@ -49,7 +68,7 @@
 
 - name: Config reloaded
   shell: sysinfo -u
-  when: etherstub.changed or authkeys.changed
+  when: etherstub.changed or authkeys.changed or keymap.changed
 
 - name: PasswordAuthentication disabled
   lineinfile:
@@ -74,6 +93,8 @@
     path: /usbkey/ssh/sshd_config
     regexp: 'X11Forwarding '
     line: 'X11Forwarding no'
+
+- include: routing.yml
 
 - include: images.yml
 

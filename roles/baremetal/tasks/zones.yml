@@ -11,11 +11,10 @@
   vars:
     itemvars: "{{ hostvars[item] }}"
     default_nics:
-      - interface: net0
-        nic_tag: stub0
+      - nic_tag: stub0
         ip: "{{ itemvars.address }}"
         netmask: 255.255.255.0
-        gateway: "{{ hostvars.gateway.address }}"
+        gateway: "{{ gateway_address }}"
         allow_ip_spoofing: yes
   vmadm:
     state: present
