@@ -11,27 +11,14 @@
     - role: baremetal
     - role: hostsfile
 
-- name: Install python on gateway
-  hosts: gateway
-  gather_facts: no
-  roles:
-    - role: python
-
-- name: Configure gateway
-  hosts: gateway
-  roles:
-    - role: zone
-    - role: hostsfile
-    - role: gateway
-
 - name: Install python on zones
-  hosts: all:!baremetal:!gateway
+  hosts: all:!baremetal
   gather_facts: no
   roles:
     - role: python
 
 - name: Basic zone config
-  hosts: all:!baremetal:!gateway
+  hosts: all:!baremetal
   roles:
     - role: zone
     - role: hostsfile
