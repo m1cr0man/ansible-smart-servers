@@ -36,7 +36,7 @@
     creates: "{{ gopath }}/src/github.com/influxdata/chronograf"
 
 - name: Chronograf built
-  command: make 2>&1 | tee chronograf_build.log
+  command: make
   args:
     chdir: "{{ gopath }}/src/github.com/influxdata/chronograf"
     creates: "{{ gopath }}/pkg/solaris_amd64/github.com/influxdata/chronograf.a"

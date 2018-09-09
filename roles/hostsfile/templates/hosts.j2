@@ -1,5 +1,5 @@
 ::1 		localhost localhost6
 127.0.0.1	localhost localhost4 localhost.local loghost {{ ansible_hostname }}
 {% for host in query('inventory_hostnames', 'all:!' + ansible_hostname) | sort -%}
-{{ hostvars[host].address }}	{{ host }}
+{{ hostvars[host].address }}	{{ host }} {{ host }}.m1cr0man.com
 {% endfor -%}

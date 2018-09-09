@@ -9,7 +9,7 @@
   environment:
     GOPATH: "{{ gopath }}"
     GOBIN: "{{ gopath }}/bin"
-    PATH: "{{ gopath }}/bin:{{ ansible_env.PATH }}"
+    PATH: "{{ gopath }}/bin:{{ default_path }}"
   when: not chronograf_bin.stat.exists
 
 - name: Data directory exists
