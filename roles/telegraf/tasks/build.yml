@@ -1,0 +1,48 @@
+---
+- name: Gopath exists
+  file:
+    path: "{{ gopath }}"
+    state: directory
+
+- name: System dependencies installed
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - go
+    - git
+    - gmake
+
+- name: Dep install script copied
+  copy:
+    src: files/dep_install.sh
+    dest: /tmp/
+    mode: 0700
+
+- name: Dep installed
+  command: /tmp/dep_install.sh
+  args:
+    creates: "{{ gopath }}/bin/dep"
+
+- name: Telegraf downloaded
+  command: go get -d github.com/influxdata/telegraf
+  args:
+    creates: "{{ gopath }}/src/github.com/influxdata/telegraf"
+
+- name: Inputs configured
+  register: telegraf_inputs
+  copy:
+    src: files/inputs.go
+    dest: "{{ gopath }}/src/github.com/influxdata/telegraf/plugins/inputs/all/all.go"
+
+- name: Outputs configured
+  register: telegraf_outputs
+  copy:
+    src: files/outputs.go
+    dest: "{{ gopath }}/src/github.com/influxdata/telegraf/plugins/outputs/all/all.go"
+
+- name: Telegraf built
+  command: make
+  args:
+    chdir: "{{ gopath }}/src/github.com/influxdata/telegraf"
+  when: telegraf_inputs is changed or telegraf_outputs is changed

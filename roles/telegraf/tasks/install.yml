@@ -1,0 +1,51 @@
+---
+- name: Install directory exists
+  file:
+    path: "{{ telegraf_install_dir }}"
+    state: directory
+
+- name: Binaries copied
+  delegate_to: "{{ inventory_hostname }}"
+  synchronize:
+    mode: pull
+    src: "rsync://builder{{ gopath }}/src/github.com/influxdata/telegraf/telegraf"
+    dest: "{{ telegraf_install_dir }}/"
+
+- name: Config directory exists
+  file:
+    path: "{{ telegraf_config_dir }}"
+    state: directory
+
+- name: Config copied
+  register: telegraf_config_file
+  template:
+    src: templates/telegraf.conf.j2
+    dest: "{{ telegraf_config_dir }}/telegraf.conf"
+    mode: 0644
+
+- name: SMF copied
+  register: telegraf_smf_file
+  template:
+    src: templates/telegraf.xml.j2
+    dest: /opt/custom/smf/telegraf.xml
+    mode: 0644
+
+- name: SMF installed
+  register: telegraf_smf_install
+  command: svccfg import telegraf.xml
+  args:
+    chdir: /opt/custom/smf/
+    creates: /var/svc/manifest/site/telegraf.xml
+  when: telegraf_smf_file is changed
+
+- name: Service loaded
+  service:
+    name: telegraf
+    enabled: yes
+  when: telegraf_smf_install is changed
+
+- name: Service restarted
+  service:
+    name: telegraf
+    state: restarted
+  when: telegraf_smf_install is not changed and telegraf_config_file is changed

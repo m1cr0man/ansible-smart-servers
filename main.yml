@@ -36,16 +36,22 @@
     - role: zone
     - role: hostsfile
 
-- name: Configure builder
+- name: Build packages
   hosts: builder
   roles:
     - role: rsyncd
+    - role: telegraf
 
 - name: Configure metrics store
   hosts: metrics
   roles:
     - role: influx
     - role: chronograf
+
+- name: Configure telegraf
+  hosts: baremetal
+  roles:
+    - role: telegraf
 
 - name: Configure blog
   hosts: blog

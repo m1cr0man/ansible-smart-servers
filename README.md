@@ -6,8 +6,10 @@ Current roles:
 
 - Bare metal (deploys zones)
 - Gateway (manages firewalling and routing)
+- Rsyncd
 - InfluxDB
 - Chronograf
+- Telegraf
 
 Dependencies:
 
@@ -17,3 +19,4 @@ Dependencies:
 ## TODO
 
 - Move zfs dataset logic into baremetal zone
+- Dataset for blog and minecraft

@@ -11,3 +11,5 @@ vmadm_cpu: 10
 exposed_ports: []
 global_data_dataset: zones/data
 gopath: /opt/build/go
+default_path: /opt/custom/bin:/usr/local/sbin:/usr/local/bin:/opt/local/sbin:/opt/local/bin:/opt/tools/bin:/opt/tools/sbin:/usr/sbin:/usr/bin:/sbin:/usr/ccs/bin
+gateway_address: 10.0.0.1
