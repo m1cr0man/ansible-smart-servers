@@ -2,14 +2,14 @@ reporting-disabled = false
 bind-address = "0.0.0.0:8088"
 
 [meta]
-  dir = "/zones/data/metrics/meta"
+  dir = "{{ global_data_dataset }}/metrics/meta"
   retention-autocreate = true
   logging-enabled = true
 
 [data]
-  dir = "/zones/data/metrics/data"
+  dir = "{{ global_data_dataset }}/metrics/data"
   index-version = "inmem"
-  wal-dir = "/zones/data/metrics/wal"
+  wal-dir = "{{ global_data_dataset }}/metrics/wal"
   wal-fsync-delay = "0s"
   validate-keys = false
   query-log-enabled = false
@@ -67,7 +67,7 @@ bind-address = "0.0.0.0:8088"
   pprof-enabled = true
   debug-pprof-enabled = false
   https-enabled = false
-  https-certificate = "/opt/local/etc/ssl/influxdb.pem"
+  https-certificate = "{{ config_dir }}/ssl/influxdb.pem"
   https-private-key = ""
   max-row-limit = 0
   max-connection-limit = 0
@@ -126,7 +126,7 @@ bind-address = "0.0.0.0:8088"
   retention-policy = ""
   consistency-level = "one"
   tls-enabled = false
-  certificate = "/opt/local/etc/ssl/influxdb.pem"
+  certificate = "{{ config_dir }}/ssl/influxdb.pem"
   batch-size = 1000
   batch-pending = 5
   batch-timeout = "1s"

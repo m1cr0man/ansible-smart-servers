@@ -1,0 +1,31 @@
+---
+- name: ZFS dataset created
+  register: metrics_dataset
+  delegate_to: "{{ groups.baremetal[0] }}"
+  zfs:
+    name: "{{ global_data_dataset }}/metrics"
+    state: present
+
+# TODO change condition so that config will happen if zone is recreated
+- name: Zone UUID retrieved
+  register: metrics_zone
+  delegate_to: "{{ groups.baremetal[0] }}"
+  vmadm:
+    name: "{{ inventory_hostname }}"
+    state: present
+  when: metrics_dataset is changed
+
+- name: ZFS dataset added to zone
+  delegate_to: "{{ groups.baremetal[0] }}"
+  command: "zonecfg -z {{ metrics_zone.uuid }} 'add dataset;set name={{ global_data_dataset }}/metrics;end;commit;verify'"
+  when: metrics_dataset is changed
+
+- name: Zone restarted
+  delegate_to: "{{ groups.baremetal[0] }}"
+  vmadm:
+    name: "{{ inventory_hostname }}"
+    state: restarted
+  when: metrics_dataset is changed
+
+- name: Zone accessible
+  wait_for_connection:

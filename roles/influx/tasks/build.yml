@@ -4,15 +4,13 @@
     path: "{{ gopath }}"
     state: directory
 
-- name: Go installed
-  pkgin:
-    name: go
+- name: System dependencies installed
+  package:
+    name: "{{ item }}"
     state: present
-
-- name: Git installed
-  pkgin:
-    name: git
-    state: present
+  loop:
+    - go
+    - git
 
 - name: Influx downloaded
   command: go get github.com/influxdata/influxdb
@@ -20,21 +18,13 @@
     creates: "{{ gopath }}/src/github.com/influxdata/influxdb"
 
 - name: Dependencies downloaded
-  command: go get ./...
+  command: go get ./influxdb
   args:
     chdir: "{{ gopath }}/src/github.com/influxdata"
     creates: "{{ gopath }}/src/github.com/influxdata/influxql"
 
 - name: Influx built
-  command: go install ./...
+  command: go install ./influxdb
   args:
     chdir: "{{ gopath }}/src/github.com/influxdata"
     creates: "{{ gopath }}/bin/influxd"
-
-- name: Binaries copied
-  delegate_to: metrics
-  synchronize:
-    mode: pull
-    src: "rsync://builder{{ gopath }}/bin/influx*"
-    dest: /opt/local/bin/
-  when: not influx_bin.stat.exists

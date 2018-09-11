@@ -1,7 +1,7 @@
 ---
 - name: Install directory exists
   file:
-    path: "{{ telegraf_install_dir }}"
+    path: "{{ binary_install_dir }}"
     state: directory
 
 - name: Binaries copied
@@ -9,18 +9,18 @@
   synchronize:
     mode: pull
     src: "rsync://builder{{ gopath }}/src/github.com/influxdata/telegraf/telegraf"
-    dest: "{{ telegraf_install_dir }}/"
+    dest: "{{ binary_install_dir }}/"
 
 - name: Config directory exists
   file:
-    path: "{{ telegraf_config_dir }}"
+    path: "{{ config_dir }}"
     state: directory
 
 - name: Config copied
   register: telegraf_config_file
   template:
     src: templates/telegraf.conf.j2
-    dest: "{{ telegraf_config_dir }}/telegraf.conf"
+    dest: "{{ config_dir }}/telegraf.conf"
     mode: 0644
 
 - name: SMF copied

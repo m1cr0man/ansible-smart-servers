@@ -1,45 +1,10 @@
 ---
-- name: Chronograf installed
-  register: chronograf_bin
-  stat:
-    path: /opt/local/bin/chronograf
-
 - include: build.yml
-  delegate_to: builder
   environment:
     GOPATH: "{{ gopath }}"
     GOBIN: "{{ gopath }}/bin"
     PATH: "{{ gopath }}/bin:{{ default_path }}"
-  when: not chronograf_bin.stat.exists
+  when: inventory_hostname == 'builder'
 
-- name: Data directory exists
-  file:
-    path: "{{ chronograf_data_dir }}"
-    state: directory
-
-- name: SMF copied
-  register: chronograf_smf_file
-  template:
-    src: templates/chronograf.xml.j2
-    dest: /opt/custom/smf/chronograf.xml
-    mode: 0644
-
-- name: SMF installed
-  register: chronograf_smf_install
-  command: svccfg import chronograf.xml
-  args:
-    chdir: /opt/custom/smf/
-    creates: /var/svc/manifest/site/chronograf.xml
-  when: chronograf_smf_file is changed
-
-- name: Service loaded
-  service:
-    name: chronograf
-    enabled: yes
-  when: chronograf_smf_install is changed
-
-- name: Service restarted
-  service:
-    name: chronograf
-    state: restarted
-  when: chronograf_smf_install is not changed and chronograf_config_file is changed
+- include: install.yml
+  when: inventory_hostname != 'builder'

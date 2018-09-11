@@ -15,12 +15,12 @@
     </dependency>
     <method_context working_directory='{{ chronograf_data_dir }}'>
       <method_environment>
-        <envvar name='PATH' value='/usr/bin:/bin:/opt/csw/bin:/opt/local/bin'/>
+        <envvar name='PATH' value='{{ binary_install_dir }}'/>
         <envvar name='HOME' value='{{ chronograf_data_dir }}'/>
         <envvar name='PWD' value='{{ chronograf_data_dir }}'/>
         <envvar name='BOLT_PATH' value='{{ chronograf_data_dir }}/chronograf-v1.db'/>
+        <envvar name='RESOURCES_PATH' value='{{ config_dir }}/chronograf'/>
         <envvar name='PORT' value='80'/>
-        <envvar name='HOST' value='{{ address }}'/>
         <envvar name='INFLUXDB_URL' value='http://localhost:8086'/>
       </method_environment>
     </method_context>

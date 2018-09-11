@@ -1,0 +1,42 @@
+---
+- include: dataset.yml
+
+- name: Install directory exists
+  file:
+    path: "{{ binary_install_dir }}"
+    state: directory
+
+- name: Binaries copied
+  delegate_to: "{{ inventory_hostname }}"
+  synchronize:
+    mode: pull
+    src: "rsync://builder{{ gopath }}/src/github.com/influxdata/chronograf/chronograf"
+    dest: "{{ binary_install_dir }}/"
+
+- name: Canned dashboards copied
+  delegate_to: metrics
+  synchronize:
+    mode: pull
+    src: "rsync://builder{{ gopath }}/src/github.com/influxdata/chronograf/canned"
+    dest: "{{ config_dir }}chronograf/"
+
+- name: SMF copied
+  register: chronograf_smf_file
+  template:
+    src: templates/chronograf.xml.j2
+    dest: /opt/custom/smf/chronograf.xml
+    mode: 0644
+
+- name: SMF installed
+  register: chronograf_smf_install
+  command: svccfg import chronograf.xml
+  args:
+    chdir: /opt/custom/smf/
+    creates: /var/svc/manifest/site/chronograf.xml
+  when: chronograf_smf_file is changed
+
+- name: Service loaded
+  service:
+    name: chronograf
+    enabled: yes
+  when: chronograf_smf_install is changed
