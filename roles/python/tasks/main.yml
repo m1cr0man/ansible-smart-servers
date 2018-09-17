@@ -1,7 +1,4 @@
 ---
-- name: Host accessible
-  wait_for_connection:
-
 - name: Python already installed
   register: python_bin
   raw: "which {{ ansible_python_interpreter }}"

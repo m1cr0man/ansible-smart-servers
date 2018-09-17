@@ -1,24 +1,39 @@
-pass out all keep state
-block in all
-block return-rst in log first proto tcp all
-block return-icmp(host-unr) in log proto udp all
-pass out quick proto udp from any to any port = 53 keep state
+## Any packet forwarded to a VM can pass through
+pass in quick on {{ baremetal_extnic }} from any to 10.0.0.0/24
+pass in quick on gw0 from 10.0.0.0/24 to any
 
+## Loopback
 pass in quick on lo0 all
 pass out quick on lo0 all
 
-pass in quick on gw0 all
-pass out quick on gw0 all
+## Internal communications
+pass in quick from 10.0.0.0/24 to 10.0.0.0/24
+pass out quick from 10.0.0.0/24 to 10.0.0.0/24
 
-pass out quick proto icmp all
-pass in quick proto icmp all
+## ICMP
+pass in quick on {{ baremetal_extnic }} proto icmp from any to any icmp-type echo
+pass out quick on {{ baremetal_extnic }} proto icmp all keep state
 
-pass in quick proto tcp from any to any port = 22 flags S/FSRPAU keep frags
+## SSH
+pass in quick proto tcp from any to {{ ansible_host }} port = 22
+pass out quick proto tcp from {{ ansible_host }} port = 22 to any
+pass out quick proto tcp from 10.0.0.0/24 port = 22 to any
+
+## DNS, HTTP[S]
+pass out quick proto udp from any to any port = 53 keep frags keep state
+pass out quick proto tcp from any to any port = 80 keep frags keep state
+pass out quick proto tcp from any to any port = 443 keep frags keep state
+
+## Services
 {% for host in query('inventory_hostnames', 'all') | sort -%}
 {% if hostvars[host].is_zone -%}
-pass in quick proto tcp from any to any port = {{ hostvars[host].ansible_ssh_port }} flags S/FSRPAU keep frags
 {% for port in hostvars[host].exposed_ports | sort %}
-pass in quick from any to any port = {{ port.src }}
+pass in quick from any to {{ hostvars[host].address }} port = {{ port.src }}
+pass out quick from {{ hostvars[host].address }} port = {{ port.dest }} to any
 {% endfor %}
 {%- endif %}
 {% endfor %}
+
+block return-rst in log first proto tcp all
+block return-icmp(host-unr) in log proto udp all
+block out quick log on {{ baremetal_extnic }}

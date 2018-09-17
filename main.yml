@@ -29,6 +29,7 @@
     - role: rsyncd
     - role: telegraf
     - role: influx
+    - role: chronograf
 
 - name: Configure metrics store
   hosts: metrics

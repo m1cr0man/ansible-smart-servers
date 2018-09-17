@@ -18,13 +18,13 @@
     creates: "{{ gopath }}/src/github.com/influxdata/influxdb"
 
 - name: Dependencies downloaded
-  command: go get ./influxdb
+  command: dep ensure
   args:
-    chdir: "{{ gopath }}/src/github.com/influxdata"
-    creates: "{{ gopath }}/src/github.com/influxdata/influxql"
+    chdir: "{{ gopath }}/src/github.com/influxdata/influxdb"
+    creates: "{{ gopath }}/src/github.com/influxdata/influxdb/vendor/github.com/influxdata/influxql"
 
 - name: Influx built
-  command: go install ./influxdb
+  command: go install ./...
   args:
-    chdir: "{{ gopath }}/src/github.com/influxdata"
+    chdir: "{{ gopath }}/src/github.com/influxdata/influxdb"
     creates: "{{ gopath }}/bin/influxd"

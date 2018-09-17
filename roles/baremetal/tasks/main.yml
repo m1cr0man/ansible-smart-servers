@@ -41,7 +41,7 @@
   lineinfile:
     path: /usbkey/config
     regexp: '^dns_domain='
-    line: 'dns_domain='
+    line: 'dns_domain=localdomain'
 
 - name: Config folder created
   file:
@@ -51,6 +51,16 @@
 - name: SMF folder created
   file:
     path: /opt/custom/smf
+    state: directory
+
+- name: Binary folder created
+  file:
+    path: "{{ binary_install_dir }}"
+    state: directory
+
+- name: Config folder created
+  file:
+    path: "{{ config_dir }}"
     state: directory
 
 - name: authorized_keys file added
@@ -66,8 +76,16 @@
     regexp: '^root_authorized_keys_file='
     line: 'root_authorized_keys_file=authorized_keys'
 
-- name: Config reloaded
-  shell: sysinfo -u
+- name: System rebooted
+  command: shutdown -y -g5 -i6
+  when: etherstub.changed or authkeys.changed or keymap.changed
+
+- name: System online
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 10
+    delay: 20
+    timeout: 300
   when: etherstub.changed or authkeys.changed or keymap.changed
 
 - name: PasswordAuthentication disabled
