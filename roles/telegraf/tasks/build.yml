@@ -43,6 +43,8 @@
 
 - name: Telegraf built
   command: make
+  vars:
+    telegraf_binary: "{{ gopath }}/src/github.com/influxdata/telegraf/telegraf"
   args:
     chdir: "{{ gopath }}/src/github.com/influxdata/telegraf"
-  when: telegraf_inputs is changed or telegraf_outputs is changed
+  when: telegraf_inputs is changed or telegraf_outputs is changed or telegraf_binary is not exists

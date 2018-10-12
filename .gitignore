@@ -2,3 +2,5 @@
 .vault.pass
 hosts_local
 host_vars/dev
+*.code-*
+.vscode

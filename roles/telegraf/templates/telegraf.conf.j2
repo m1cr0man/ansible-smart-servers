@@ -25,7 +25,7 @@
 # Configuration for telegraf agent
 [agent]
   ## Default data collection interval for all inputs
-  interval = "30s"
+  interval = "10s"
   ## Rounds collection interval to 'interval'
   ## ie, if interval="10s" then always collect on :00, :10, :20, etc.
   round_interval = true
@@ -49,7 +49,7 @@
 
   ## Default flushing interval for all outputs. You shouldn't set this below
   ## interval. Maximum flush_interval will be flush_interval + flush_jitter
-  flush_interval = "10s"
+  flush_interval = "30s"
   ## Jitter the flush interval by a random amount. This is primarily to avoid
   ## large write spikes for users running a large number of telegraf instances.
   ## ie, a jitter of 5s and interval 10s means flushes will happen every 10-15s
@@ -88,7 +88,7 @@
   ##
   ## Multiple URLs can be specified for a single cluster, only ONE of the
   ## urls will be written to each interval.
-  # urls = ["unix:///var/run/influxdb.sock"]
+  urls = ["udp://{{ hostvars.metrics.address }}:8089"]
   # urls = ["udp://127.0.0.1:8089"]
   # urls = ["http://127.0.0.1:8086"]
 
@@ -198,13 +198,13 @@
 
 # # Map enum values according to given table.
 # [[processors.enum]]
-#   [[processors.enum.fields]]
+#   [[processors.enum.mapping]]
 #     ## Name of the field to map
-#     source = "name"
+#     field = "status"
 #
 #     ## Destination field to be used for the mapped value.  By default the source
 #     ## field is used, overwriting the original value.
-#     # destination = "mapped"
+#     # dest = "status_code"
 #
 #     ## Default value to be used for all values not contained in the mapping
 #     ## table.  When unset, the unmodified value for the field will be used if no
@@ -212,9 +212,10 @@
 #     # default = 0
 #
 #     ## Table of mappings
-#     [processors.enum.fields.value_mappings]
-#       value1 = 1
-#       value2 = 2
+#     [processors.enum.mapping.value_mappings]
+#       green = 1
+#       yellow = 2
+#       red = 3
 
 
 # # Apply metric modifications using override semantics.
@@ -284,27 +285,6 @@
 
 # # Rename measurements, tags, and fields that pass through this filter.
 # [[processors.rename]]
-#   ## Measurement, tag, and field renamings are stored in separate sub-tables.
-#   ## Specify one sub-table per rename operation.
-#   # [[processors.rename.measurement]]
-#   #   ## measurement to change
-#   #   from = "kilobytes_per_second"
-#   #   to = "kbps"
-#
-#   # [[processors.rename.tag]]
-#   #   ## tag to change
-#   #   from = "host"
-#   #   to = "hostname"
-#
-#   # [[processors.rename.field]]
-#   #   ## field to change
-#   #   from = "lower"
-#   #   to = "min"
-#
-#   # [[processors.rename.field]]
-#   #   ## field to change
-#   #   from = "upper"
-#   #   to = "max"
 
 
 # # Perform string processing on tags, fields, and measurements
@@ -462,19 +442,19 @@
 ###############################################################################
 
 # Read metrics about cpu usage
-[[inputs.cpu]]
+# [[inputs.cpu]]
   ## Whether to report per-cpu stats or not
-  percpu = false
+  # percpu = true
   ## Whether to report total system cpu stats or not
-  totalcpu = true
+  # totalcpu = true
   ## If true, collect raw CPU time metrics.
-  collect_cpu_time = false
+  # collect_cpu_time = false
   ## If true, compute and report the sum of all non-idle CPU states.
-  report_active = true
+  # report_active = false
 
 
 # Read metrics about system load & uptime
-[[inputs.system]]
+# [[inputs.system]]
   # no configuration
 
 
@@ -630,6 +610,30 @@
 #   response_timeout = "5s"
 
 
+# # Collect global and zone cpu usage
+[[inputs.smartos_cpu]]
+  ## Tag metrics with zone alias?
+  tag_alias = false
+
+
+# # Collect global and zone disk usage
+[[inputs.smartos_disk]]
+  ## Tag metrics with zone alias?
+  tag_alias = false
+
+
+# # Collect global and zone net usage
+[[inputs.smartos_net]]
+  ## Tag metrics with zone alias?
+  tag_alias = false
+
+
+# # Collect global and zone ram usage
+[[inputs.smartos_ram]]
+  ## Tag metrics with zone alias?
+  tag_alias = false
+
+
 # # Reads metrics from a Teamspeak 3 Server via ServerQuery
 # [[inputs.teamspeak]]
 #   ## Server address for Teamspeak 3 ServerQuery
@@ -640,4 +644,49 @@
 #   password = "secret"
 #   ## Array of virtual servers
 #   # virtual_servers = [1]
+
+
+
+###############################################################################
+#                            SERVICE INPUT PLUGINS                            #
+###############################################################################
+
+# # Accepts syslog messages per RFC5425
+[[inputs.syslog]]
+#   ## Specify an ip or hostname with port - eg., tcp://localhost:6514, tcp://10.0.0.1:6514
+#   ## Protocol, address and port to host the syslog receiver.
+#   ## If no host is specified, then localhost is used.
+#   ## If no port is specified, 6514 is used (RFC5425#section-4.1).
+  server = "tcp://{{ address }}:6514"
+#
+#   ## TLS Config
+#   # tls_allowed_cacerts = ["/etc/telegraf/ca.pem"]
+#   # tls_cert = "/etc/telegraf/cert.pem"
+#   # tls_key = "/etc/telegraf/key.pem"
+#
+#   ## Period between keep alive probes.
+#   ## 0 disables keep alive probes.
+#   ## Defaults to the OS configuration.
+#   ## Only applies to stream sockets (e.g. TCP).
+#   # keep_alive_period = "5m"
+#
+#   ## Maximum number of concurrent connections (default = 0).
+#   ## 0 means unlimited.
+#   ## Only applies to stream sockets (e.g. TCP).
+#   # max_connections = 1024
+#
+#   ## Read timeout is the maximum time allowed for reading a single message (default = 5s).
+#   ## 0 means unlimited.
+#   # read_timeout = "5s"
+#
+#   ## Whether to parse in best effort mode or not (default = false).
+#   ## By default best effort parsing is off.
+#   # best_effort = false
+#
+#   ## Character to prepend to SD-PARAMs (default = "_").
+#   ## A syslog message can contain multiple parameters and multiple identifiers within structured data section.
+#   ## Eg., [id1 name1="val1" name2="val2"][id2 name1="val1" nameA="valA"]
+#   ## For each combination a field is created.
+#   ## Its name is created concatenating identifier, sdparam_separator, and parameter name.
+#   # sdparam_separator = "_"
 

@@ -10,6 +10,7 @@
   delegate_to: "{{ inventory_hostname }}"
   synchronize:
     mode: pull
+    checksum: yes
     src: "rsync://builder{{ gopath }}/bin/influx*"
     dest: "{{ binary_install_dir }}/"
 

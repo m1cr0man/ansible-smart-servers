@@ -7,18 +7,26 @@
     state: directory
 
 - name: Binaries copied
+  register: chronograf_binary
   delegate_to: "{{ inventory_hostname }}"
   synchronize:
     mode: pull
+    checksum: yes
     src: "rsync://builder{{ gopath }}/src/github.com/influxdata/chronograf/chronograf"
     dest: "{{ binary_install_dir }}/"
 
 - name: Canned dashboards copied
-  delegate_to: metrics
+  delegate_to: "{{ inventory_hostname }}"
   synchronize:
     mode: pull
+    checksum: yes
     src: "rsync://builder{{ gopath }}/src/github.com/influxdata/chronograf/canned"
-    dest: "{{ config_dir }}chronograf/"
+    dest: "{{ config_dir }}/chronograf/"
+
+- name: Data directory exists
+  file:
+    path: "{{ chronograf_data_dir }}"
+    state: directory
 
 - name: SMF copied
   register: chronograf_smf_file
@@ -40,3 +48,9 @@
     name: chronograf
     enabled: yes
   when: chronograf_smf_install is changed
+
+- name: Service restarted
+  service:
+    name: chronograf
+    state: restarted
+  when: chronograf_smf_install is not changed and (chronograf_binary is changed)

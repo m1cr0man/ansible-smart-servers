@@ -5,9 +5,11 @@
     state: directory
 
 - name: Binaries copied
+  register: telegraf_binary
   delegate_to: "{{ inventory_hostname }}"
   synchronize:
     mode: pull
+    checksum: yes
     src: "rsync://builder{{ gopath }}/src/github.com/influxdata/telegraf/telegraf"
     dest: "{{ binary_install_dir }}/"
 
@@ -48,4 +50,4 @@
   service:
     name: telegraf
     state: restarted
-  when: telegraf_smf_install is not changed and telegraf_config_file is changed
+  when: telegraf_smf_install is not changed and (telegraf_config_file is changed or telegraf_binary is changed)
