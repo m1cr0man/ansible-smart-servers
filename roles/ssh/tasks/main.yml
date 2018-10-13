@@ -1,0 +1,14 @@
+---
+- name: config copied
+  register: sshd_config
+  template:
+    src: templates/sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    backup: yes
+    mode: 0644
+
+- name: service restarted
+  service:
+    name: ssh
+    state: restarted
+  when: sshd_config is changed

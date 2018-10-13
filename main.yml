@@ -8,6 +8,7 @@
 - name: Configure bare metal
   hosts: baremetal
   roles:
+    - role: ssh
     - role: baremetal
     - role: hostsfile
 
@@ -20,6 +21,7 @@
 - name: Basic zone config
   hosts: all:!baremetal
   roles:
+    - role: ssh
     - role: zone
     - role: hostsfile
 

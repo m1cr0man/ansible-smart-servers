@@ -76,6 +76,13 @@
     regexp: '^root_authorized_keys_file='
     line: 'root_authorized_keys_file=authorized_keys'
 
+- name: SSHD config persistent
+  copy:
+    remote_src: yes
+    mode: preserve
+    src: /etc/ssh/sshd_config
+    dest: /usbkey/ssh/
+
 - name: System rebooted
   command: shutdown -y -g5 -i6
   when: etherstub.changed or authkeys.changed or keymap.changed
@@ -87,30 +94,6 @@
     delay: 20
     timeout: 300
   when: etherstub.changed or authkeys.changed or keymap.changed
-
-- name: PasswordAuthentication disabled
-  lineinfile:
-    path: /usbkey/ssh/sshd_config
-    regexp: 'PasswordAuthentication '
-    line: 'PasswordAuthentication no'
-
-- name: Password prompt disabled
-  lineinfile:
-    path: /usbkey/ssh/sshd_config
-    regexp: 'KbdInteractiveAuthentication'
-    line: 'KbdInteractiveAuthentication no'
-
-- name: GSSAPI disabled
-  lineinfile:
-    path: /usbkey/ssh/sshd_config
-    regexp: 'GSSAPIAuthentication '
-    line: 'GSSAPIAuthentication no'
-
-- name: X11Forwarding disabled
-  lineinfile:
-    path: /usbkey/ssh/sshd_config
-    regexp: 'X11Forwarding '
-    line: 'X11Forwarding no'
 
 - include: routing.yml
 

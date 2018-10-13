@@ -1,0 +1,51 @@
+# Configured via Ansible
+# RTFM if you want the explanations ;)
+
+# Connection
+Port                    22
+Protocol                2
+ListenAddress           ::
+UseDNS                  no
+KeepAlive               yes
+Compression             yes
+PrintMotd               no
+VersionAddendum         none
+
+# Logging
+SyslogFacility          AUTH
+LogLevel                INFO
+
+# Features
+GatewayPorts            yes
+PermitTunnel            no
+X11Forwarding           no
+AllowTcpForwarding      yes
+PermitUserEnvironment   yes
+Subsystem               sftp    internal-sftp
+
+# Auth
+HostKey                 /var/ssh/ssh_host_rsa_key
+HostKey                 /var/ssh/ssh_host_dsa_key
+HostKey                 /var/ssh/ssh_host_ecdsa_key
+HostKey                 /var/ssh/ssh_host_ed25519_key
+AuthorizedKeysFile      .ssh/authorized_keys
+PermitRootLogin         {% if is_zone %}without-password{% else %}yes{% endif %}
+
+StrictModes             yes
+AllowAgentForwarding    yes
+PubkeyAuthentication    yes
+IgnoreRhosts            yes
+PermitEmptyPasswords    no
+PasswordAuthentication  no
+GSSAPIAuthentication    no
+GSSAPIKeyExchange       no
+KerberosAuthentication  no
+MaxStartups             5:40:10
+MaxAuthTries            4
+MaxSessions             3
+LoginGraceTime          60
+{% if is_zone -%}
+
+# Enable Joyent smartlogin
+PubKeyPlugin libsmartsshd.so
+{%- endif %}
