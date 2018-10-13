@@ -4,6 +4,8 @@
 
 - include: config.yml
 
+- include: rsyslog.yml
+
 - include: zfs.yml
 
 - include: routing.yml
