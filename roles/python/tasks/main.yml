@@ -6,7 +6,7 @@
 
 - name: Pkgin installed
   register: pkgin_bin
-  raw: PATH=/opt/tools/bin:$PATH which pkgin
+  raw: "which pkgin"
   ignore_errors: yes
   when: python_bin.rc != 0
 
@@ -19,9 +19,9 @@
   when: python_bin.rc != 0 and pkgin_bin.rc != 0
 
 - name: Package list updated
-  raw: PATH=/opt/tools/bin:$PATH pkgin -y update
+  raw: "pkgin -y update"
   when: python_bin.rc != 0
 
 - name: Python installed
-  raw: PATH=/opt/tools/bin:$PATH pkgin -y install python27-2.7.15nb1
+  raw: "pkgin -y install python27-2.7.15nb1"
   when: python_bin.rc != 0
