@@ -34,6 +34,6 @@ pass out quick from {{ hostvars[host].address }} port = {{ port.dest }} to any
 {%- endif %}
 {% endfor %}
 
-block return-rst in log first proto tcp all
-block return-icmp(host-unr) in log proto udp all
+block return-rst in proto tcp all
+block return-icmp(host-unr) in proto udp all
 block out quick log on {{ baremetal_extnic }}
