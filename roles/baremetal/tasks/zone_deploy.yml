@@ -1,0 +1,29 @@
+---
+- name: Deploy zone {{ itemvars.inventory_hostname }}
+  register: zone_deploy
+  vmadm:
+    state: present
+    brand: joyent
+    autoboot: yes
+    zfs_root_compression: lz4
+    image_uuid: "{{ itemvars.vmadm_image_uuid }}"
+    alias: "{{ itemvars.inventory_hostname }}"
+    hostname: "{{ itemvars.inventory_hostname }}"
+    resolvers: "{{ itemvars.vmadm_resolvers }}"
+    nics: "{{ default_nics }} + {{ itemvars.vmadm_nics }}"
+    max_physical_memory: "{{ itemvars.vmadm_ram }}"
+    cpu_shares: "{{ itemvars.vmadm_cpu }}"
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_authkeys }}"
+      user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"
+
+- name: Datasets added
+  register: zone_dataset_deploy
+  loop: "{{ itemvars.datasets | sort }}"
+  include_tasks: zone_dataset.yml
+
+- name: Zone resarted
+  vmadm:
+    name: "{{ itemvars.inventory_hostname }}"
+    state: restarted
+  when: zone_dataset_deploy is changed

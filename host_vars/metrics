@@ -2,6 +2,8 @@
 is_zone: yes
 vmadm_ram: 1024
 vmadm_cpu: 50
+datasets:
+  - metrics
 http_services:
   - name: chronograf
     rules:

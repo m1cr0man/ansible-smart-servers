@@ -2,6 +2,8 @@
 is_zone: yes
 vmadm_ram: 768
 vmadm_cpu: 25
+datasets:
+  - blog
 http_services:
   - name: m1cr0blog
     rules:

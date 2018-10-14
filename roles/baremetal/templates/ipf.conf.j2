@@ -19,10 +19,11 @@ pass in quick proto tcp from any to {{ ansible_host }} port = 22
 pass out quick proto tcp from {{ ansible_host }} port = 22 to any
 pass out quick proto tcp from 10.0.0.0/24 port = 22 to any
 
-## DNS, HTTP[S]
+## DNS, HTTP[S], NTP
 pass out quick proto udp from any to any port = 53 keep frags keep state
 pass out quick proto tcp from any to any port = 80 keep frags keep state
 pass out quick proto tcp from any to any port = 443 keep frags keep state
+pass out quick proto udp from any to any port = 123 keep frags keep state
 
 ## Services
 pass in quick on {{ baremetal_extnic }} from any to 10.0.0.0/24

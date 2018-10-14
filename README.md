@@ -18,6 +18,5 @@ Dependencies:
 
 ## TODO
 
-- Move zfs dataset logic into baremetal zone
 - Installing Minecraft server
 - M1cr0blog module
