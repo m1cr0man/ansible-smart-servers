@@ -2,14 +2,14 @@ reporting-disabled = false
 bind-address = "0.0.0.0:8088"
 
 [meta]
-  dir = "{{ global_data_dataset }}/metrics/meta"
+  dir = "{{ influx_data_dir }}/meta"
   retention-autocreate = true
   logging-enabled = true
 
 [data]
-  dir = "{{ global_data_dataset }}/metrics/data"
+  dir = "{{ influx_data_dir }}/data"
   index-version = "inmem"
-  wal-dir = "{{ global_data_dataset }}/metrics/wal"
+  wal-dir = "{{ influx_data_dir }}/wal"
   wal-fsync-delay = "0s"
   validate-keys = false
   query-log-enabled = false
