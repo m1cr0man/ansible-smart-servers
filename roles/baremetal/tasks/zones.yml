@@ -1,7 +1,4 @@
 ---
-- name: Secrets loaded
-  include_vars: secrets.yml
-
 - name: Zones deployed
   loop: "{{ groups.all | sort }}"
   loop_control:
