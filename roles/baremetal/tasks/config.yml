@@ -60,6 +60,12 @@
     src: /etc/ssh/sshd_config
     dest: /usbkey/ssh/
 
+- name: Update script copied
+  copy:
+    src: files/update_smartos.sh
+    dest: /opt/local/
+    mode: 744
+
 - name: System rebooted
   command: shutdown -y -g5 -i6
   when: etherstub.changed or authkeys.changed or keymap.changed

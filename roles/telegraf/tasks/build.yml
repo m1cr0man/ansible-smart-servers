@@ -11,6 +11,7 @@
   loop:
     - go
     - git
+    - gcc49
     - gmake
 
 - name: Dep install script copied
@@ -28,6 +29,11 @@
   command: go get -d github.com/influxdata/telegraf
   args:
     creates: "{{ gopath }}/src/github.com/influxdata/telegraf"
+
+- name: Custom plugins downloaded
+  command: go get -d github.com/m1cr0man/smartos-telegraf-plugins
+  args:
+    creates: "{{ gopath }}/src/github.com/m1cr0man/smartos-telegraf-plugins"
 
 - name: Inputs configured
   register: telegraf_inputs

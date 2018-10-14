@@ -11,6 +11,8 @@
   loop:
     - go
     - git
+    - gcc49
+    - gmake
 
 - name: Influx downloaded
   command: go get github.com/influxdata/influxdb

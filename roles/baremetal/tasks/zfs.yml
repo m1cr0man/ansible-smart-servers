@@ -1,9 +1,9 @@
 ---
-- name: ZFS compression and dedup enabled
+- name: ZFS global dedup enabled
   zfs:
     name: zones
     extra_zfs_properties:
-      compress: lz4
+      compress: no
       dedup: yes
     state: present
 
@@ -17,4 +17,6 @@
 - name: ZFS global data dataset created
   zfs:
     name: "{{ global_data_dataset }}"
+    extra_zfs_properties:
+      compress: lz4
     state: present

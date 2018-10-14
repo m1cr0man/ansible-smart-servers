@@ -1,12 +1,12 @@
 ---
 - name: Python already installed
   register: python_bin
-  raw: "which {{ ansible_python_interpreter }}"
+  raw: "test -e {{ ansible_python_interpreter }}"
   ignore_errors: yes
 
 - name: Pkgin installed
   register: pkgin_bin
-  raw: "which pkgin"
+  raw: "test -e /opt/tools/bin/pkgin"
   ignore_errors: yes
   when: python_bin.rc != 0
 
@@ -19,9 +19,9 @@
   when: python_bin.rc != 0 and pkgin_bin.rc != 0
 
 - name: Package list updated
-  raw: "pkgin -y update"
+  raw: "/opt/tools/bin/pkgin -y update"
   when: python_bin.rc != 0
 
 - name: Python installed
-  raw: "pkgin -y install python27-2.7.15nb1"
+  raw: "/opt/tools/bin/pkgin -y install python27-2.7.15nb1"
   when: python_bin.rc != 0
