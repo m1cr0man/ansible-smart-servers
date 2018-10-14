@@ -1,0 +1,37 @@
+checkNewVersion = false
+defaultEntryPoints = ["http"]
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+
+[file]
+watch = false
+
+[backends]
+{% for host in query('inventory_hostnames', 'all') | sort -%}
+{% for svc in hostvars[host].http_services %}
+  [backends.{{ svc.name }}_back]
+    [backends.{{ svc.name }}_back.servers.server{{ loop.index }}]
+      url = "http://{{ hostvars[host].address }}:{{ svc.port }}{{ svc.path | default('') }}"
+      weight = {{ loop.index * 10 }}
+{% endfor -%}
+{% endfor %}
+
+[frontends]
+{% for host in query('inventory_hostnames', 'all') | sort -%}
+{% for svc in hostvars[host].http_services %}
+  [frontends.{{ svc.name }}]
+    backend = "{{ svc.name }}_back"
+{% if svc.protect %}
+    [frontends.{{ svc.name }}.auth]
+      [frontends.{{ svc.name }}.auth.basic]
+        removeHeader = true
+        usersFile = "{{ config_dir }}/traefik.htpasswd"
+{% endif -%}
+{% for rule in svc.rules %}
+    [frontends.{{ svc.name }}.routes.test_{{ loop.index }}]
+      rule = "{{ rule }}"
+{% endfor -%}
+{% endfor %}
+{% endfor %}

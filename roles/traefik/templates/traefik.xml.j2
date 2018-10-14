@@ -1,0 +1,37 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='traefik'>
+  <service name='site/traefik' type='service' version='1'>
+    <create_default_instance enabled='true'/>
+    <single_instance/>
+    <dependency name='network' grouping='require_all' restart_on='refresh' type='service'>
+      <service_fmri value='svc:/milestone/network:default'/>
+    </dependency>
+    <dependency name='filesystem' grouping='require_all' restart_on='refresh' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='config_data' grouping='require_all' restart_on='restart' type='path'>
+      <service_fmri value='file://localhost{{ config_dir }}/traefik.toml'/>
+    </dependency>
+    <method_context working_directory='{{ config_dir }}'>
+      <method_environment>
+        <envvar name='PATH' value='{{ binary_install_dir }}'/>
+        <envvar name='HOME' value='{{ config_dir }}'/>
+        <envvar name='PWD' value='{{ config_dir }}'/>
+      </method_environment>
+    </method_context>
+    <exec_method name='start' type='method' exec='traefik --configFile={{ config_dir }}/traefik.toml' timeout_seconds='30'/>
+    <exec_method name='stop' type='method' exec=':kill' timeout_seconds='30'/>
+    <property_group name='startd' type='framework'>
+      <propval name='duration' type='astring' value='child'/>
+      <propval name='ignore_error' type='astring' value='core,signal'/>
+    </property_group>
+    <property_group name='application' type='application'> </property_group>
+    <stability value='Evolving'/>
+    <template>
+      <common_name>
+        <loctext xml:lang='C'>HTTP load balancer</loctext>
+      </common_name>
+    </template>
+  </service>
+</service_bundle>

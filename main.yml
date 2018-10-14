@@ -32,6 +32,7 @@
     - role: telegraf
     - role: influx
     - role: chronograf
+    - role: traefik
 
 - name: Configure metrics store
   hosts: metrics
@@ -39,10 +40,11 @@
     - role: influx
     - role: chronograf
 
-- name: Configure telegraf
+- name: Configure baremetal services
   hosts: baremetal
   roles:
     - role: telegraf
+    - role: traefik
 
 - name: Configure blog
   hosts: blog

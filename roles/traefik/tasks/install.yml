@@ -1,0 +1,60 @@
+---
+- name: Install directory exists
+  file:
+    path: "{{ binary_install_dir }}"
+    state: directory
+
+- name: Binaries copied
+  register: traefik_binary
+  delegate_to: "{{ inventory_hostname }}"
+  synchronize:
+    mode: pull
+    checksum: yes
+    src: "rsync://builder{{ gopath }}/src/github.com/containous/traefik/traefik"
+    dest: "{{ binary_install_dir }}/"
+
+- name: Config directory exists
+  file:
+    path: "{{ config_dir }}"
+    state: directory
+
+- name: Config copied
+  register: traefik_config_file
+  template:
+    src: templates/traefik.toml.j2
+    dest: "{{ config_dir }}/traefik.toml"
+    mode: 0644
+
+- name: Htpasswd file copied
+  register: traefik_htpasswd_file
+  template:
+    src: templates/traefik.htpasswd.j2
+    dest: "{{ config_dir }}/traefik.htpasswd"
+    mode: 0644
+
+- name: SMF copied
+  register: traefik_smf_file
+  template:
+    src: templates/traefik.xml.j2
+    dest: /opt/custom/smf/traefik.xml
+    mode: 0644
+
+- name: SMF installed
+  register: traefik_smf_install
+  command: svccfg import traefik.xml
+  args:
+    chdir: /opt/custom/smf/
+    creates: /var/svc/manifest/site/traefik.xml
+  when: traefik_smf_file.changed
+
+- name: Service loaded
+  service:
+    name: traefik
+    enabled: yes
+  when: traefik_smf_install.changed
+
+- name: Service restarted
+  service:
+    name: traefik
+    state: restarted
+  when: traefik_smf_file is not changed and (traefik_config_file is changed or traefik_binary is changed)

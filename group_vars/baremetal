@@ -1,2 +1,7 @@
 ---
 ansible_python_interpreter: /opt/tools/bin/python
+exposed_ports:
+  - src: 80
+    dest: 80
+  - src: 443
+    dest: 443

@@ -1,0 +1,47 @@
+---
+- name: Gopath exists
+  file:
+    path: "{{ gopath }}"
+    state: directory
+
+- name: System dependencies installed
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - go
+    - git
+
+- name: Traefik downloaded
+  command: go get -d github.com/containous/traefik/
+  args:
+    creates: "{{ gopath }}/src/github.com/containous/traefik/"
+
+- name: Go dependencies downloaded
+  command: go get github.com/containous/go-bindata/...
+  args:
+    creates: "{{ gopath }}/src/github.com/containous/go-bindata/"
+
+# See https://github.com/sirupsen/logrus/issues/836
+# TODO remove when 1.1.1 is the version in traefik dependencies
+- name: Logrus removed
+  file:
+    path: "{{ gopath }}/src/github.com/containous/traefik/vendor/github.com/sirupsen/logrus"
+    state: absent
+
+- name: Logrus up to date
+  command: git clone https://github.com/sirupsen/logrus.git
+  args:
+    chdir: "{{ gopath }}/src/github.com/containous/traefik/vendor/github.com/sirupsen"
+
+- name: Static files generated
+  command: go generate
+  args:
+    chdir: "{{ gopath }}/src/github.com/containous/traefik"
+    creates: "{{ gopath }}/src/github.com/containous/traefik/traefik/autogen/genstatic"
+
+- name: Traefik built
+  command: go build ./cmd/traefik
+  args:
+    chdir: "{{ gopath }}/src/github.com/containous/traefik"
+    creates: "{{ gopath }}/src/github.com/containous/traefik/traefik"
