@@ -6,5 +6,6 @@
     state: present
 
 - name: ZFS dataset {{ item }} added to zone
+  register: dataset_add
   command: "zonecfg -z {{ zone_deploy.uuid }} 'add dataset;set name={{ global_data_dataset }}/{{ item }};end;commit;verify'"
-  when: dataset_create is changed
+  when: dataset_create is changed or zone_deploy is changed

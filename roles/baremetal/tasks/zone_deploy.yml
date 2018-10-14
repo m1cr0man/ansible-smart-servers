@@ -19,11 +19,13 @@
 
 - name: Datasets added
   register: zone_dataset_deploy
+  changed_when: dataset_add is changed
   loop: "{{ itemvars.datasets | sort }}"
   include_tasks: zone_dataset.yml
 
 - name: Zone resarted
+  register: zone_restart
   vmadm:
     name: "{{ itemvars.inventory_hostname }}"
     state: restarted
-  when: zone_dataset_deploy is changed
+  when: zone_dataset_deploy is changed and zone_deploy is not changed
