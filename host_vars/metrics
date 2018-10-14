@@ -6,7 +6,8 @@ datasets:
   - metrics
 http_services:
   - name: chronograf
-    rules:
-      - "Host:graphs.m1cr0man.com"
+    routes:
+      - name: graphs
+        rule: "Host:graphs.m1cr0man.com"
     port: 80
     protect: yes

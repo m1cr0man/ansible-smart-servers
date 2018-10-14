@@ -6,7 +6,9 @@ datasets:
   - blog
 http_services:
   - name: m1cr0blog
-    rules:
-      - "Host:m1cr0man.com,www.m1cr0man.com,localhost"
-      - "Host:u.m1cr0man.com;AddPrefix:/uploads/"
+    routes:
+      - name: blog
+        rule: "Host:m1cr0man.com,www.m1cr0man.com,localhost"
+      - name: uploads
+        rule: "Host:u.m1cr0man.com;AddPrefix:/uploads/"
     port: 3000

@@ -21,17 +21,17 @@ watch = false
 [frontends]
 {% for host in query('inventory_hostnames', 'all') | sort -%}
 {% for svc in hostvars[host].http_services %}
-  [frontends.{{ svc.name }}]
+{% for route in svc.routes %}
+  [frontends.{{ svc.name }}_{{ route.name }}]
     backend = "{{ svc.name }}_back"
-{% if svc.protect %}
-    [frontends.{{ svc.name }}.auth]
-      [frontends.{{ svc.name }}.auth.basic]
+{% if svc.protect | default(false) %}
+    [frontends.{{ svc.name }}_{{ route.name }}.auth]
+      [frontends.{{ svc.name }}_{{ route.name }}.auth.basic]
         removeHeader = true
         usersFile = "{{ config_dir }}/traefik.htpasswd"
 {% endif -%}
-{% for rule in svc.rules %}
-    [frontends.{{ svc.name }}.routes.test_{{ loop.index }}]
-      rule = "{{ rule }}"
+    [frontends.{{ svc.name }}_{{ route.name }}.routes.route_1]
+      rule = "{{ route.rule }}"
 {% endfor -%}
 {% endfor %}
 {% endfor %}
