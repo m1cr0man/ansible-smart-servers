@@ -13,9 +13,9 @@
 
 - name: SMF copied
   register: m1cr0blog_smf_file
-  copy:
-    src: files/m1cr0blog.xml
-    dest: /opt/custom/smf/
+  template:
+    src: templates/m1cr0blog.xml.j2
+    dest: /opt/custom/smf/m1cr0blog.xml
     mode: 0644
 
 - name: SMF installed
@@ -24,16 +24,16 @@
   args:
     chdir: /opt/custom/smf/
     creates: /var/svc/manifest/site/m1cr0blog.xml
-  when: m1cr0blog_smf_file.changed
+  when: m1cr0blog_smf_file is changed
 
 - name: Service loaded
   service:
     name: m1cr0blog
     enabled: yes
-  when: m1cr0blog_smf_install.changed
+  when: m1cr0blog_smf_install is changed
 
 - name: Service restarted
   service:
     name: m1cr0blog
     state: restarted
-  when: m1cr0blog_install.changed and m1cr0blog_smf_install.ok
+  when: m1cr0blog_smf_install is not changed and m1cr0blog_install is changed

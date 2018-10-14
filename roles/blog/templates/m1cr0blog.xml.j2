@@ -10,11 +10,11 @@
     <dependency name='filesystem' grouping='require_all' restart_on='refresh' type='service'>
       <service_fmri value='svc:/system/filesystem/local'/>
     </dependency>
-    <method_context working_directory='/opt/m1cr0blog'>
+    <method_context working_directory='{{ m1cr0blog_data_dir }}'>
       <method_environment>
         <envvar name='PATH' value='/usr/bin:/bin:/opt/csw/bin:/opt/local/bin'/>
-        <envvar name='HOME' value='/opt/m1cr0blog'/>
-        <envvar name='PWD' value='/opt/m1cr0blog'/>
+        <envvar name='HOME' value='{{ m1cr0blog_data_dir }}'/>
+        <envvar name='PWD' value='{{ m1cr0blog_data_dir }}'/>
       </method_environment>
     </method_context>
     <exec_method name='start' type='method' exec='m1cr0blog' timeout_seconds='30'/>
