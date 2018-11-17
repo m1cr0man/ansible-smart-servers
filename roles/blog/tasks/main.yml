@@ -1,6 +1,6 @@
 ---
 - name: node installed
-  pkgin:
+  package:
     name: nodejs
     state: present
 

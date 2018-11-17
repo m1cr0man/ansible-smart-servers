@@ -4,3 +4,5 @@ hosts_local
 host_vars/dev
 *.code-*
 .vscode
+.idea/
+ansible-smart-servers.iml

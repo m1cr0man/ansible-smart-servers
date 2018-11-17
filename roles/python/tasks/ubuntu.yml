@@ -1,0 +1,6 @@
+---
+- name: Package list updated
+  raw: "apt -y update"
+
+- name: Python installed
+  raw: "apt -y install python3"

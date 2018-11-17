@@ -22,7 +22,8 @@
   hosts: all:!baremetal
   roles:
     - role: ssh
-    - role: zone
+    - role: basic
+    - role: rsyslog
     - role: hostsfile
 
 - name: Build packages
@@ -54,6 +55,6 @@
 - name: Configure Minecraft servers
   hosts: minecraft
   roles:
-    - role: zone
+    - role: basic
     - role: hostsfile
     - role: minecraft

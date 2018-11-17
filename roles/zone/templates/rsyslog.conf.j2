@@ -1,6 +1,0 @@
-# Configured via Ansible
-
-$ModLoad immark
-$ModLoad imsolaris
-
-*.*                                             @{{ hostvars[groups.baremetal[0]].inventory_hostname }}:514;RSYSLOG_SyslogProtocol23Format

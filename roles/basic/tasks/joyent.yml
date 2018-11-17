@@ -1,0 +1,10 @@
+---
+- name: Packages updated
+  pkgin:
+    update_cache: yes
+    full_upgrade: yes
+
+- name: SMF directory exists
+  file:
+    path: /opt/custom/smf
+    state: directory

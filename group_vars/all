@@ -17,3 +17,4 @@ binary_install_dir: /opt/custom/bin
 config_dir: /opt/custom/etc
 default_path: /opt/custom/bin:/usr/local/sbin:/usr/local/bin:/opt/local/sbin:/opt/local/bin:/opt/tools/bin:/opt/tools/sbin:/usr/sbin:/usr/bin:/sbin:/usr/ccs/bin
 http_services: []
+brand: joyent

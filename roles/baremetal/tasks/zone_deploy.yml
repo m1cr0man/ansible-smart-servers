@@ -3,7 +3,8 @@
   register: zone_deploy
   vmadm:
     state: present
-    brand: joyent
+    brand: "{{ itemvars.brand }}"
+    kernel_version: 4.4.0
     autoboot: yes
     zfs_root_compression: lz4
     image_uuid: "{{ itemvars.vmadm_image_uuid }}"
@@ -23,7 +24,7 @@
   loop: "{{ itemvars.datasets | sort }}"
   include_tasks: zone_dataset.yml
 
-- name: Zone resarted
+- name: Zone restarted
   register: zone_restart
   vmadm:
     name: "{{ itemvars.inventory_hostname }}"

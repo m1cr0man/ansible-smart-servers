@@ -1,0 +1,19 @@
+---
+- name: Pkgin installed
+  register: pkgin_bin
+  raw: "test -e /opt/tools/bin/pkgin"
+  ignore_errors: yes
+
+- name: Pkgin downloaded
+  raw: cd /var/tmp && curl -kO https://pkgsrc.joyent.com/packages/SmartOS/bootstrap/bootstrap-2018Q2-tools.tar.gz
+  when: pkgin_bin.rc != 0
+
+- name: Pkgin unpacked
+  raw: tar -zxpf /var/tmp/bootstrap-2018Q2-tools.tar.gz -C /
+  when: pkgin_bin.rc != 0
+
+- name: Package list updated
+  raw: "/opt/tools/bin/pkgin -y update"
+
+- name: Python installed
+  raw: "/opt/tools/bin/pkgin -y install python27-2.7.15nb1"
