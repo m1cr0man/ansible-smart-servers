@@ -5,9 +5,15 @@ exposed_ports:
     dest: 80
   - src: 443
     dest: 443
+  - src: 2220
+    dest: 22
+    address: 10.0.0.20
   - src: 6500
     dest: 6500
     address: 10.0.0.20
+  - src: 2303
+    dest: 22
+    address: 10.0.0.103
   - src: 25570
     dest: 25565
     address: 10.0.0.103
