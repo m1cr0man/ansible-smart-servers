@@ -1,0 +1,8 @@
+# Configured via Ansible
+
+$ModLoad immark
+{% if brand == 'joyent' -%}
+$ModLoad imsolaris
+{% endif -%}
+
+*.*                                             @{{ hostvars[groups.baremetal[0]].inventory_hostname }}:514;RSYSLOG_SyslogProtocol23Format

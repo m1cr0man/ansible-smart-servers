@@ -1,0 +1,12 @@
+---
+- name: Rsyslog config set
+  register: rsyslog_config_zone
+  template:
+    src: templates/rsyslog.conf.j2
+    dest: "{{ '/opt/local/' if brand == 'joyent' else '' }}/etc/rsyslog.conf"
+
+- name: Rsyslog reloaded
+  service:
+    name: rsyslog
+    state: reloaded
+  when: rsyslog_config_zone.changed
