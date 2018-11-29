@@ -5,3 +5,16 @@ exposed_ports:
     dest: 80
   - src: 443
     dest: 443
+  - src: 6500
+    dest: 6500
+    address: 10.0.0.20
+  - src: 25570
+    dest: 25565
+    address: 10.0.0.103
+http_services:
+  - name: abstruse
+    routes:
+      - name: ci
+        rule: "Host:ci.m1cr0man.com"
+    port: 6500
+    address: 10.0.0.20

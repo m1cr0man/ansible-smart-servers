@@ -13,7 +13,7 @@ watch = false
 {% for svc in hostvars[host].http_services %}
   [backends.{{ svc.name }}_back]
     [backends.{{ svc.name }}_back.servers.server{{ loop.index }}]
-      url = "http://{{ hostvars[host].address }}:{{ svc.port }}{{ svc.path | default('') }}"
+      url = "http://{{ svc.address | default(hostvars[host].address) }}:{{ svc.port }}{{ svc.path | default('') }}"
       weight = {{ loop.index * 10 }}
 {% endfor -%}
 {% endfor %}
