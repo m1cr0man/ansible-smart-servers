@@ -1,10 +1,9 @@
 ---
 - name: Zones deployed
-  loop: "{{ groups.all | sort }}"
+  loop: "{{ query('inventory_hostnames', 'all:!baremetal') | sort }}"
   loop_control:
     label: "{{ itemvars.inventory_hostname }}"
     loop_var: zone_name
-  when: itemvars.is_zone
   vars:
     itemvars: "{{ hostvars[zone_name] }}"
     default_nics:

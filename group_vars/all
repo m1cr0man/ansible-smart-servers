@@ -1,6 +1,6 @@
 ---
 ansible_python_interpreter: python
-is_zone: no
+is_gz: no
 vmadm_image_uuid: 038c1972-8147-11e8-9201-7fbba6e573a0
 vmadm_resolvers:
   - 8.8.8.8

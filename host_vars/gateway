@@ -1,5 +1,4 @@
 ---
-is_zone: yes
 gateway_extnic: net1
 vmadm_nics:
   - interface: net1

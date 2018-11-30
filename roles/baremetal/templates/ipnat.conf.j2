@@ -1,7 +1,7 @@
 map {{ baremetal_extnic }} 10.0.0.0/24 -> 0/32 portmap tcp/udp auto
 map {{ baremetal_extnic }} 10.0.0.0/24 -> 0/32
 {% for host in query('inventory_hostnames', 'all') | sort -%}
-{% if hostvars[host].is_zone -%}
+{% if not hostvars[host].is_gz -%}
     rdr {{ baremetal_extnic }} 0.0.0.0/0 port {{ hostvars[host].ansible_ssh_port }} -> {{ hostvars[host].address }} port 22
 {%- endif %}
 {% for port in hostvars[host].exposed_ports | sort %}

@@ -7,16 +7,22 @@ Current roles:
 - Bare metal (deploys zones)
 - Gateway (manages firewalling and routing)
 - Rsyncd
+- Rsyslog
+- M1cr0blog
 - InfluxDB
 - Chronograf
 - Telegraf
+- Traefik
 
 Dependencies:
 
-- Second IP and MAC address for the gateway
+- None!
 
 
 ## TODO
 
 - Installing Minecraft server
-- M1cr0blog module
+- KVM support
+- Use loFS extended mounts
+- Zone update support
+- Detailed Readme

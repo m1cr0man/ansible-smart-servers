@@ -1,6 +1,6 @@
 ---
 - name: Images imported
-  loop: "{{ groups.all | sort }}"
+  loop: "{{ query('inventory_hostnames', 'all:!baremetal') | sort }}"
   vars:
     uuid: "{{ hostvars[item].vmadm_image_uuid }}"
   loop_control:

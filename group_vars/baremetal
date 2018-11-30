@@ -1,4 +1,5 @@
 ---
+is_gz: yes
 ansible_python_interpreter: /opt/tools/bin/python
 exposed_ports:
   - src: 80

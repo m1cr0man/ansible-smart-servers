@@ -1,4 +1,3 @@
 ---
-is_zone: yes
 vmadm_ram: 2048
 vmadm_cpu: 5

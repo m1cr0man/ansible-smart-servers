@@ -29,7 +29,7 @@ HostKey                 /var/ssh/ssh_host_dsa_key
 HostKey                 /var/ssh/ssh_host_ecdsa_key
 HostKey                 /var/ssh/ssh_host_ed25519_key
 AuthorizedKeysFile      .ssh/authorized_keys
-PermitRootLogin         {% if is_zone %}without-password{% else %}yes{% endif %}
+PermitRootLogin         {% if is_gz %}yes{% else %}without-password{% endif %}
 
 StrictModes             yes
 AllowAgentForwarding    yes
@@ -44,7 +44,7 @@ MaxStartups             5:40:10
 MaxAuthTries            4
 MaxSessions             3
 LoginGraceTime          60
-{% if is_zone -%}
+{% if not is_gz -%}
 
 # Enable Joyent smartlogin
 PubKeyPlugin libsmartsshd.so
