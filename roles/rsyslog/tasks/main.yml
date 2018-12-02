@@ -8,5 +8,5 @@
 - name: Rsyslog reloaded
   service:
     name: rsyslog
-    state: reloaded
+    state: restarted
   when: rsyslog_config_zone.changed

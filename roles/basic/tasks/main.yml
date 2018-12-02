@@ -3,4 +3,4 @@
   when: brand == 'joyent'
 
 - include: ubuntu.yml
-  when: brand == 'lx'
+  when: brand == 'lx' or brand == 'kvm'

@@ -6,6 +6,7 @@
     dest: /etc/ssh/sshd_config
     backup: yes
     mode: 0644
+    validate: bash -c "test '{{ is_gz }}' = 'True' || sshd -t -f %s"
 
 - name: service restarted
   service:

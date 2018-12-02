@@ -16,4 +16,4 @@
   when: python_bin.rc != 0 and brand == 'joyent'
 
 - include: ubuntu.yml
-  when: python_bin.rc != 0 and brand == 'lx'
+  when: python_bin.rc != 0 and (brand == 'lx' or brand == 'kvm')

@@ -1,22 +1,49 @@
 ---
-- name: Deploy zone {{ itemvars.inventory_hostname }}
+- name: Deploy Joyent/LX zone {{ itemvars.inventory_hostname }}
   register: zone_deploy
   vmadm:
     state: present
-    brand: "{{ itemvars.brand }}"
-    kernel_version: 4.4.0
     autoboot: yes
-    zfs_root_compression: lz4
-    image_uuid: "{{ itemvars.vmadm_image_uuid }}"
+    brand: "{{ itemvars.brand }}"
     alias: "{{ itemvars.inventory_hostname }}"
     hostname: "{{ itemvars.inventory_hostname }}"
     resolvers: "{{ itemvars.vmadm_resolvers }}"
-    nics: "{{ default_nics }} + {{ itemvars.vmadm_nics }}"
+    nics: "{{ default_nics + itemvars.vmadm_nics }}"
+    image_uuid: "{{ itemvars.vmadm_image_uuid }}"
     max_physical_memory: "{{ itemvars.vmadm_ram }}"
     cpu_shares: "{{ itemvars.vmadm_cpu }}"
+    zfs_root_compression: lz4
+    kernel_version: 4.4.0
     customer_metadata:
       root_authorized_keys: "{{ ssh_authkeys }}"
       user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"
+  when: itemvars.brand == 'lx' or itemvars.brand == 'joyent'
+
+- name: Deploy KVM zone {{ itemvars.inventory_hostname }}
+  register: kvm_deploy
+  vmadm:
+    state: present
+    autoboot: yes
+    brand: "{{ itemvars.brand }}"
+    alias: "{{ itemvars.inventory_hostname }}"
+    hostname: "{{ itemvars.inventory_hostname }}"
+    resolvers: "{{ itemvars.vmadm_resolvers }}"
+    nics: "{{ default_nics + itemvars.vmadm_nics }}"
+    disks: "{{ default_disks + itemvars.vmadm_disks }}"
+    ram: "{{ itemvars.vmadm_ram }}"
+    vcpus: "{{ itemvars.vmadm_vcpus }}"
+    cpu_shares: "{{ itemvars.vmadm_cpu }}"
+    zfs_root_compression: lz4
+    disk_driver: virtio
+    nic_driver: virtio
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_authkeys }}"
+  vars:
+    default_disks:
+      - boot: yes
+        image_uuid: "{{ itemvars.vmadm_image_uuid }}"
+        compression: lz4
+  when: itemvars.brand == 'kvm'
 
 - name: Datasets added
   register: zone_dataset_deploy

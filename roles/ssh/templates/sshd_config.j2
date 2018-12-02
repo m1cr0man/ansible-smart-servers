@@ -44,7 +44,7 @@ MaxStartups             5:40:10
 MaxAuthTries            4
 MaxSessions             3
 LoginGraceTime          60
-{% if not is_gz -%}
+{% if brand == 'joyent' or brand == 'lx' -%}
 
 # Enable Joyent smartlogin
 PubKeyPlugin libsmartsshd.so

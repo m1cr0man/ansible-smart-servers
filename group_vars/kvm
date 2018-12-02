@@ -1,0 +1,6 @@
+---
+ansible_user: ubuntu
+ansible_become: yes
+brand: kvm
+vmadm_ram: 2048
+vmadm_image_uuid: ac99517a-72ac-44c0-90e6-c7ce3d944a0a

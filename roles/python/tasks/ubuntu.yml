@@ -4,3 +4,6 @@
 
 - name: Python installed
   raw: "apt -y install python3"
+
+- name: Symlink python3 to python
+  raw: "ln -s /usr/bin/python3 /usr/bin/python || true"
