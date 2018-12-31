@@ -2,6 +2,8 @@
 
 Deploys a number of services into joyent-brand zones on a SmartOS server
 
+Requires Ansible 2.5+
+
 Current roles:
 
 - Bare metal (deploys zones)

@@ -1,0 +1,78 @@
+---
+- name: "{{ hostname }}: Zone destroyed"
+  tags:
+    - redeploy
+    - destroy
+  vmadm:
+    alias: "{{ hostname }}"
+    state: absent
+
+- name: "{{ hostname }}: Image deleted"
+  tags:
+    - redeploy
+    - destroy
+  imgadm:
+    tag: "{{ image_tag }}"
+    state: absent
+
+- name: "{{ hostname }}: Image source configured"
+  tags:
+    - deploy
+  imgadm:
+    source: 'https://docker.io'
+    type: docker
+    state: present
+
+- name: "{{ hostname }}: Image downloaded"
+  tags:
+    - deploy
+    - redeploy
+  register: docker_img
+  imgadm:
+    tag: "{{ image_tag }}"
+    state: present
+
+- name: "{{ hostname }}: Image attributes loaded"
+  tags:
+    - deploy
+    - redeploy
+  smartos_image_facts:
+    filters: "uuid={{ docker_img.uuid }}"
+
+- name: "{{ hostname }}: Zone created"
+  tags:
+    - deploy
+    - redeploy
+  vars:
+    image_config: "{{ smartos_images[docker_img.uuid]['tags']['docker:config'] }}"
+  vmadm:
+  # These values differ per zone
+    alias: "{{ hostname }}"
+    hostname: "{{ hostname }}"
+    image_uuid: "{{ docker_img.uuid }}"
+    max_physical_memory: "{{ vmadm_ram }}"
+    cpu_shares: "{{ vmadm_cpu }}"
+    filesystems: "{{ filesystems }}"
+    nics:
+      - nic_tag: stub0
+        ip: "{{ address }}"
+        netmask: 255.255.255.0
+        gateway: "{{ gateway_address }}"
+        allow_ip_spoofing: yes
+  # These values are the same for every zone
+    state: present
+    autoboot: yes
+    brand: lx
+    docker: yes
+    zfs_root_compression: lz4
+    kernel_version: 4.4.0
+    resolvers: "{{ vmadm_resolvers }}"
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_authkeys }}"
+      user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"
+    internal_metadata:
+      'docker:entrypoint': "{{ image_config['Entrypoint'] | tojson | string }}"
+      'docker:cmd': "{{ image_config['Cmd'] | tojson | string }}"
+      'docker:env': "{{ image_config['Env'] | tojson | string }}"
+      'docker:workingdir': "{{ image_config['WorkingDir'] }}"
+      'docker:workdir': "{{ image_config['WorkingDir'] }}"

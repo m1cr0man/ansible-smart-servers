@@ -1,0 +1,16 @@
+---
+- name: Secrets loaded
+  tags:
+    - deploy
+    - redeploy
+  include_vars: secrets.yaml
+
+- name: influxdb
+  tags:
+    - influxdb
+  include_tasks: influxdb.yml
+
+- name: chronograf
+  tags:
+    - chronograf
+  include_tasks: chronograf.yml

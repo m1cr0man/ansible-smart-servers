@@ -1,0 +1,29 @@
+---
+- name: "influxdb: Dataset created"
+  tags:
+    - deploy
+  zfs:
+    name: "{{ global_data_dataset }}/influxdb"
+    state: present
+
+- name: "influxdb: Zone"
+  vars:
+    hostname: influxdb
+    address: 10.0.0.62
+    image_tag: influxdb:alpine
+    vmadm_cpu: 5
+    vmadm_ram: 256
+    filesystems:
+      - type: lofs
+        source: "/{{ global_data_dataset }}/influxdb"
+        target: /var/lib/influxdb
+        options:
+          - nodevice
+  include: deploy.yml
+
+- name: "influxdb: Dataset deleted"
+  tags:
+    - destroy
+  zfs:
+    name: "{{ global_data_dataset }}/influxdb"
+    state: absent
