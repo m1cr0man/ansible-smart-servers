@@ -43,6 +43,7 @@
     hostname: "{{ hostname }}"
     image_uuid: "{{ docker_img.uuid }}"
     max_physical_memory: "{{ vmadm_ram }}"
+    max_swap: "{{ vmadm_ram * 4 }}"
     cpu_shares: "{{ vmadm_cpu }}"
     filesystems: "{{ filesystems }}"
     nics:
@@ -59,12 +60,14 @@
     zfs_root_compression: lz4
     kernel_version: 4.4.0
     resolvers: "{{ vmadm_resolvers }}"
+    maintain_resolvers: yes
     customer_metadata:
       root_authorized_keys: "{{ ssh_authkeys }}"
       user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"
     internal_metadata:
-      'docker:entrypoint': "{{ image_config['Entrypoint'] | tojson | string }}"
-      'docker:cmd': "{{ image_config['Cmd'] | tojson | string }}"
-      'docker:env': "{{ image_config['Env'] | tojson | string }}"
+      'docker:entrypoint': "{{ entrypoint | default(image_config['Entrypoint']) | tojson | string }}"
+      'docker:cmd': "{{ cmd | default(image_config['Cmd']) | tojson | string }}"
+      'docker:env': "{{ (image_config['Env'] + (envvars | default([]))) | tojson | string }}"
       'docker:workingdir': "{{ image_config['WorkingDir'] }}"
       'docker:workdir': "{{ image_config['WorkingDir'] }}"
+      'docker:extraHosts': "{{ hosts | default([]) | tojson | string }}"

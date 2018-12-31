@@ -1,10 +1,25 @@
 ---
+- tags:
+    - deploy
+    - redeploy
+  set_fact:
+    influx_data_dir: "/var/lib/influxdb"
+
 - name: "influxdb: Dataset created"
   tags:
     - deploy
   zfs:
     name: "{{ global_data_dataset }}/influxdb"
     state: present
+
+- name: "influxdb: Config copied"
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/influxd.toml.j2
+    dest: "/{{ global_data_dataset }}/influxdb/influxd.toml"
+    mode: 0644
 
 - name: "influxdb: Zone"
   vars:
@@ -16,9 +31,11 @@
     filesystems:
       - type: lofs
         source: "/{{ global_data_dataset }}/influxdb"
-        target: /var/lib/influxdb
+        target: "{{ influx_data_dir }}"
         options:
           - nodevice
+    envvars:
+      - "INFLUXDB_CONFIG_PATH={{ influx_data_dir }}/influxd.toml"
   include: deploy.yml
 
 - name: "influxdb: Dataset deleted"

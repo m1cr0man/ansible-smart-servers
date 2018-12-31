@@ -19,6 +19,10 @@
         target: /var/lib/chronograf
         options:
           - nodevice
+    envvars:
+      - INFLUXDB_URL=http://influxdb:8086
+    hosts:
+      - "influxdb:10.0.0.62"
   include: deploy.yml
 
 - name: "chronograf: Dataset deleted"
