@@ -9,7 +9,7 @@
 - name: "chronograf: Zone configured"
   vars:
     hostname: chronograf
-    address: 10.0.0.63
+    address: 10.0.0.3
     image_tag: chronograf:alpine
     vmadm_cpu: 5
     vmadm_ram: 256
@@ -20,9 +20,7 @@
         options:
           - nodevice
     envvars:
-      - INFLUXDB_URL=http://influxdb:8086
-    hosts:
-      - "influxdb:10.0.0.62"
+      - INFLUXDB_URL=http://10.0.0.2:8086
   include: deploy.yml
 
 - name: "chronograf: Dataset deleted"
