@@ -5,6 +5,14 @@
     - redeploy
   include_vars: secrets.yml
 
+- name: Image source configured
+  tags:
+    - deploy
+  imgadm:
+    source: 'https://docker.io'
+    type: docker
+    state: present
+
 - name: influxdb
   tags:
     - influxdb

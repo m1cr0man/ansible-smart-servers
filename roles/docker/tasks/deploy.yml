@@ -15,14 +15,6 @@
     tag: "{{ image_tag }}"
     state: absent
 
-- name: "{{ hostname }}: Image source configured"
-  tags:
-    - deploy
-  imgadm:
-    source: 'https://docker.io'
-    type: docker
-    state: present
-
 - name: "{{ hostname }}: Image downloaded"
   tags:
     - deploy
