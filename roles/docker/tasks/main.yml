@@ -3,7 +3,7 @@
   tags:
     - deploy
     - redeploy
-  include_vars: secrets.yaml
+  include_vars: secrets.yml
 
 - name: influxdb
   tags:
