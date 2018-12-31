@@ -11,6 +11,7 @@ vmadm_ram: 256
 vmadm_cpu: 10
 vmadm_vcpus: 1
 gateway_address: 10.0.0.1
+metrics_address: 10.0.0.2
 datasets: []
 exposed_ports: []
 global_data_dataset: zones/data

@@ -20,7 +20,7 @@
         options:
           - nodevice
     envvars:
-      - INFLUXDB_URL=http://10.0.0.2:8086
+      - "INFLUXDB_URL=http://{{ metrics_address }}:8086"
   include: deploy.yml
 
 - name: "chronograf: Dataset deleted"
