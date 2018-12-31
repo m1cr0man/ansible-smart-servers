@@ -11,6 +11,7 @@
     - role: ssh
     - role: baremetal
     - role: hostsfile
+    - role: docker
 
 - name: Install python on zones
   hosts: all:!baremetal
@@ -34,12 +35,6 @@
     - role: influx
     - role: chronograf
     - role: traefik
-
-- name: Configure metrics store
-  hosts: metrics
-  roles:
-    - role: influx
-    - role: chronograf
 
 - name: Configure baremetal services
   hosts: baremetal
