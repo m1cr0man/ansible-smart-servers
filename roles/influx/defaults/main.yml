@@ -1,2 +1,0 @@
----
-influx_data_dir: "/{{ global_data_dataset }}/{{ datasets[0] }}"
