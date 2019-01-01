@@ -4,7 +4,7 @@
 # Connection
 Port                    22
 Protocol                2
-ListenAddress           ::
+ListenAddress           0.0.0.0
 UseDNS                  no
 KeepAlive               yes
 Compression             yes
@@ -24,10 +24,17 @@ PermitUserEnvironment   yes
 Subsystem               sftp    internal-sftp
 
 # Auth
+{% if brand == 'joyent' or is_gz %}
 HostKey                 /var/ssh/ssh_host_rsa_key
 HostKey                 /var/ssh/ssh_host_dsa_key
 HostKey                 /var/ssh/ssh_host_ecdsa_key
 HostKey                 /var/ssh/ssh_host_ed25519_key
+{% else %}
+HostKey                 /etc/ssh/ssh_host_rsa_key
+HostKey                 /etc/ssh/ssh_host_dsa_key
+HostKey                 /etc/ssh/ssh_host_ecdsa_key
+HostKey                 /etc/ssh/ssh_host_ed25519_key
+{% endif %}
 AuthorizedKeysFile      .ssh/authorized_keys
 PermitRootLogin         {% if is_gz %}yes{% else %}without-password{% endif %}
 
@@ -44,7 +51,7 @@ MaxStartups             5:40:10
 MaxAuthTries            4
 MaxSessions             3
 LoginGraceTime          60
-{% if brand == 'joyent' or brand == 'lx' -%}
+{% if brand == 'joyent' -%}
 
 # Enable Joyent smartlogin
 PubKeyPlugin libsmartsshd.so

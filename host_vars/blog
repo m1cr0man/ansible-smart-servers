@@ -1,5 +1,7 @@
 ---
-vmadm_ram: 768
+brand: lx
+vmadm_image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
+vmadm_ram: 512
 vmadm_cpu: 25
 datasets:
   - blog

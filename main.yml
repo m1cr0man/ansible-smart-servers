@@ -9,9 +9,16 @@
   hosts: baremetal
   roles:
     - role: ssh
-    - role: baremetal
     - role: hostsfile
     - role: docker
+
+- name: Deploy non-Docker zones
+  hosts: baremetal
+  tags:
+    - deploy
+    - redeploy
+  roles:
+    - role: baremetal
 
 - name: Install python on zones
   hosts: all:!baremetal
@@ -21,6 +28,9 @@
 
 - name: Basic zone config
   hosts: all:!baremetal
+  tags:
+    - deploy
+    - redeploy
   roles:
     - role: ssh
     - role: basic
@@ -32,18 +42,21 @@
   roles:
     - role: rsyncd
     - role: telegraf
-    - role: influx
-    - role: chronograf
     - role: traefik
 
 - name: Configure baremetal services
   hosts: baremetal
+  tags:
+    - deploy
+    - redeploy
   roles:
     - role: telegraf
     - role: traefik
 
 - name: Configure blog
   hosts: blog
+  tags:
+    - blog
   roles:
     - role: blog
 

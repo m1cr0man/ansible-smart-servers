@@ -24,6 +24,7 @@ watch = false
 {% for route in svc.routes %}
   [frontends.{{ svc.name }}_{{ route.name }}]
     backend = "{{ svc.name }}_back"
+    passHostHeader = true
 {% if svc.protect | default(false) %}
     [frontends.{{ svc.name }}_{{ route.name }}.auth]
       [frontends.{{ svc.name }}_{{ route.name }}.auth.basic]

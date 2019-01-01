@@ -1,5 +1,6 @@
 ---
 - name: Packages updated
   apt:
+    update_cache: yes
     upgrade: full
     autoclean: yes

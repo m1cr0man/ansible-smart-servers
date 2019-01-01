@@ -1,8 +1,4 @@
-metrics ansible_host=144.76.44.123 ansible_ssh_port=2202 address=10.0.0.2
-
 blog ansible_host=144.76.44.123 ansible_ssh_port=2210 address=10.0.0.10
-
-builder ansible_host=144.76.44.123 ansible_ssh_port=2300 address=10.0.0.100
 
 [baremetal]
 gelandewagen ansible_host=144.76.44.123 address=10.0.0.1 baremetal_extnic=rge0

@@ -1,5 +1,22 @@
 ---
-- name: node installed
+- name: Node key added
+  apt_key:
+    id: 68576280
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
+- name: Node repo added
+  register: node_repo
+  apt_repository:
+    repo: deb https://deb.nodesource.com/node_11.x xenial main
+    state: present
+
+- name: Apt refreshed
+  apt:
+    update_cache: yes
+  when: node_repo is changed
+
+- name: Node installed
   package:
     name: nodejs
     state: present
@@ -8,32 +25,20 @@
   register: m1cr0blog_install
   npm:
     name: m1cr0blog
-    global: yes
+    path: "{{ m1cr0blog_data_dir }}/app"
     state: latest
 
-- name: SMF copied
-  register: m1cr0blog_smf_file
+- name: Service unit file copied
+  register: m1cr0blog_unitfile
   template:
-    src: templates/m1cr0blog.xml.j2
-    dest: /opt/custom/smf/m1cr0blog.xml
+    src: templates/m1cr0blog.service.j2
+    dest: /etc/systemd/system/m1cr0blog.service
     mode: 0644
 
-- name: SMF installed
-  register: m1cr0blog_smf_install
-  command: svccfg import m1cr0blog.xml
-  args:
-    chdir: /opt/custom/smf/
-    creates: /var/svc/manifest/site/m1cr0blog.xml
-  when: m1cr0blog_smf_file is changed
-
 - name: Service loaded
-  service:
-    name: m1cr0blog
-    enabled: yes
-  when: m1cr0blog_smf_install is changed
-
-- name: Service restarted
-  service:
+  systemd:
     name: m1cr0blog
     state: restarted
-  when: m1cr0blog_smf_install is not changed and m1cr0blog_install is changed
+    daemon_reload: yes
+    enabled: yes
+  when: m1cr0blog_install is changed or m1cr0blog_unitfile is changed

@@ -25,3 +25,10 @@ http_services:
         rule: "Host:ci.m1cr0man.com"
     port: 6500
     address: 10.0.0.20
+  - name: chronograf
+    routes:
+      - name: graphs
+        rule: "Host:graphs.m1cr0man.com"
+    port: 8888
+    address: 10.0.0.3
+    protect: yes
