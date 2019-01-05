@@ -22,3 +22,8 @@
   tags:
     - chronograf
   include_tasks: chronograf.yml
+
+- name: traefik
+  tags:
+    - traefik
+  include_tasks: traefik.yml

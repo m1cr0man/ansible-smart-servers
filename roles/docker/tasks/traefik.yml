@@ -1,0 +1,51 @@
+---
+- tags:
+    - deploy
+    - redeploy
+  set_fact:
+    influx_data_dir: /var/lib/traefik
+
+- name: "traefik: Dataset created"
+  tags:
+    - deploy
+  zfs:
+    name: "{{ global_data_dataset }}/traefik"
+    state: present
+
+- name: "traefik: Configs copied"
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: "templates/{{ item }}"
+    dest: "/{{ global_data_dataset }}/traefik/{{ item }}"
+    backup: no
+    mode: 0644
+    trim_blocks: no
+  with_items:
+    - traefik.htpasswd
+    - traefik.toml
+
+- name: "traefik: Zone"
+  vars:
+    hostname: traefik
+    address: 10.0.0.4
+    image_tag: traefik:alpine
+    vmadm_cpu: 25
+    vmadm_ram: 256
+    filesystems:
+      - type: hyprlofs
+        source: "/{{ global_data_dataset }}/traefik"
+        target: "{{ influx_data_dir }}"
+        options:
+          - nodevice
+    envvars:
+      - "INFLUXDB_CONFIG_PATH={{ influx_data_dir }}/traefik.toml"
+  include: deploy.yml
+
+- name: "traefik: Dataset deleted"
+  tags:
+    - destroy
+  zfs:
+    name: "{{ global_data_dataset }}/traefik"
+    state: absent

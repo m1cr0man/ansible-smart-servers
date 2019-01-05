@@ -1,0 +1,2 @@
+---
+traefik_config_dir: "{{ global_data_datset }}/traefik/traefik.d"
