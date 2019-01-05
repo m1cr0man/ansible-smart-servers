@@ -15,6 +15,7 @@
     dest: "{{ ipf_config_dir }}/{{ item.path }}"
     mode: "{{ item.mode }}"
     trim_blocks: no
+    validate: /usr/sbin/ipf -n -f %s
   with_filetree: templates/ipf.d/
   when: item.state == "file"
 
@@ -40,7 +41,7 @@
     backup: no
     mode: 0644
     trim_blocks: no
-    validate: "svccfg validate %s"
+    validate: /usr/sbin/svccfg validate %s
 
 - name: SMF uninstalled
   tags:

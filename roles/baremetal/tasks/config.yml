@@ -108,7 +108,7 @@
     dest: "{{ smf_install_dir }}/setup-init.xml"
     backup: no
     mode: 0644
-    validate: "svccfg validate %s"
+    validate: /usr/sbin/svccfg validate %s
 
 - name: Init SMF uninstalled
   tags:

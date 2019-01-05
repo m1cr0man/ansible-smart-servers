@@ -15,6 +15,7 @@
     dest: "{{ ipnat_config_dir }}/{{ item.path }}"
     mode: "{{ item.mode }}"
     trim_blocks: no
+    validate: /usr/sbin/ipnat -n -f %s
   with_filetree: templates/ipnat.d/
   when: item.state == "file"
 
@@ -40,7 +41,7 @@
     backup: no
     mode: 0644
     trim_blocks: no
-    validate: "svccfg validate %s"
+    validate: /usr/sbin/svccfg validate %s
 
 - name: SMF uninstalled
   tags:

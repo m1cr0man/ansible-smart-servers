@@ -15,6 +15,7 @@ case "$1" in
   if [ -z $(ls -1 "$IPF_CONFIG_SOURCE") ]; then exit 0; fi
 
   cat "$IPF_CONFIG_SOURCE"/* > "$IPF_CONFIG"
+  svcadm refresh ipfilter
 
   ;;
 'start')
@@ -25,6 +26,7 @@ case "$1" in
 'stop')
 
   echo -e "pass in all\npass out all keep state" > /etc/ipf/ipf.conf
+  svcadm refresh ipfilter
 
   ;;
 *)

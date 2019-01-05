@@ -15,6 +15,7 @@ case "$1" in
   if [ -z $(ls -1 "$IPNAT_CONFIG_SOURCE") ]; then exit 0; fi
 
   cat "$IPNAT_CONFIG_SOURCE"/* > "$IPNAT_CONFIG"
+  svcadm refresh ipfilter
 
   ;;
 'start')
@@ -26,6 +27,7 @@ case "$1" in
 'stop')
 
   rm "$IPNAT_CONFIG"
+  svcadm refresh ipfilter
   routeadm -u -d ipv4-forwarding
 
   ;;
