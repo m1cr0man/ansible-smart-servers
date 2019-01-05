@@ -1,0 +1,4 @@
+
+## {{ item.id }}
+pass in quick proto {{ item.proto }} from any to {{ item.address }} port = {{ item.port }}
+pass out quick proto {{ item.proto }} from {{ item.address }} port = {{ item.port }} to any

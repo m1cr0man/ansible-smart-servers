@@ -1,10 +1,16 @@
 ---
 - name: Packages updated
+  tags:
+    - deploy
+    - redeploy
   pkgin:
     update_cache: yes
     full_upgrade: yes
 
 - name: SMF directory exists
+  tags:
+    - deploy
+    - redeploy
   file:
     path: /opt/custom/smf
     state: directory

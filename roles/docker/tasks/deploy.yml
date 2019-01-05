@@ -59,7 +59,7 @@
     docker: yes
     zfs_root_compression: lz4
     kernel_version: 4.4.0
-    resolvers: "{{ vmadm_resolvers }}"
+    resolvers: "{{ resolvers }}"
     maintain_resolvers: yes
     customer_metadata:
       root_authorized_keys: "{{ ssh_authkeys }}"

@@ -1,0 +1,22 @@
+---
+- name: Rules unconfigured
+  file:
+    path: "{{ ipf_config_dir }}/50_{{ item.id }}"
+    state: absent
+  with_items: "{{ rules }}"
+  when: item.state is defined and item.state == 'absent'
+
+- name: Rules configured
+  template:
+    src: templates/50_newrule
+    dest: "{{ ipf_config_dir }}/50_{{ item.id }}"
+    backup: no
+    mode: 0644
+    trim_blocks: no
+  with_items: "{{ rules }}"
+  when: item.state is not defined or item.state == 'present'
+
+- name: Filters refreshed
+  service:
+    name: site/setup/ipf
+    state: reloaded

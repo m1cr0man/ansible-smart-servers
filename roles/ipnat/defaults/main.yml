@@ -1,0 +1,2 @@
+---
+ipnat_config_dir: "{{ config_dir }}/ipnat.d"

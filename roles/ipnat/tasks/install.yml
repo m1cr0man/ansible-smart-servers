@@ -1,0 +1,76 @@
+---
+- name: Config dir exists
+  tags:
+    - deploy
+  file:
+    path: "{{ ipnat_config_dir }}"
+    state: directory
+
+- name: Base rules added
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ ipnat_config_dir }}/{{ item.path }}"
+    mode: "{{ item.mode }}"
+    trim_blocks: no
+  with_filetree: templates/ipnat.d/
+  when: item.state == "file"
+
+- name: Service script installed
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/setup-ipnat.sh
+    dest: "{{ binary_install_dir }}/setup-ipnat.sh"
+    backup: no
+    mode: 0744
+    trim_blocks: no
+
+- name: SMF copied
+  register: ipnat_smf_file
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/setup-ipnat.xml
+    dest: "{{ smf_install_dir }}/setup-ipnat.xml"
+    backup: no
+    mode: 0644
+    trim_blocks: no
+    validate: "svccfg validate %s"
+
+- name: SMF uninstalled
+  tags:
+    - destroy
+  command: svccfg delete site/setup/ipnat
+  args:
+    removes: /var/svc/manifest/site/setup-ipnat.xml
+
+- name: SMF installed
+  tags:
+    - deploy
+    - redeploy
+  command: svccfg import setup-ipnat.xml
+  args:
+    chdir: "{{ smf_install_dir }}"
+  when: ipnat_smf_file is changed
+
+- name: SMF enabled
+  tags:
+    - deploy
+    - redeploy
+  service:
+    name: site/setup/ipnat
+    enabled: yes
+
+- name: Service refreshed
+  tags:
+    - deploy
+    - redeploy
+  service:
+    name: site/setup/ipnat
+    state: reloaded
+  when: ipnat_smf_file is not changed

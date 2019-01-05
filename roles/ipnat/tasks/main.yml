@@ -1,0 +1,10 @@
+---
+- name: NAT deployed
+  import_tasks: install.yml
+  when: install is defined and install
+
+- name: NAT configured
+  tags:
+    - always
+  import_tasks: configure.yml
+  when: rules is defined

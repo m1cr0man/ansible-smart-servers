@@ -1,6 +1,8 @@
 ---
 - name: etherstub enabled
   register: etherstub
+  tags:
+    - deploy
   lineinfile:
     path: /usbkey/config
     regexp: '^etherstub='
@@ -8,39 +10,53 @@
 
 - name: keymap set
   register: keymap
+  tags:
+    - deploy
   lineinfile:
     path: /usbkey/config
     regexp: '^default_keymap='
     line: 'default_keymap=uk'
 
 - name: search domain set
-  register: keymap
+  tags:
+    - deploy
   lineinfile:
     path: /usbkey/config
     regexp: '^dns_domain='
     line: 'dns_domain=localdomain'
 
 - name: Auto config folder created
+  tags:
+    - deploy
   file:
     path: /usbkey/config.inc/
     state: directory
 
 - name: SMF folder created
+  tags:
+    - deploy
   file:
     path: /opt/custom/smf
     state: directory
 
 - name: Binary folder created
+  tags:
+    - deploy
   file:
     path: "{{ binary_install_dir }}"
     state: directory
 
 - name: Config folder created
+  tags:
+    - deploy
   file:
     path: "{{ config_dir }}"
     state: directory
 
 - name: authorized_keys file added
+  tags:
+    - deploy
+    - redeploy
   copy:
     content: "{{ ssh_authkeys }}"
     dest: /usbkey/config.inc/authorized_keys
@@ -48,12 +64,18 @@
 
 - name: authorized_keys configured
   register: authkeys
+  tags:
+    - deploy
+    - redeploy
   lineinfile:
     path: /usbkey/config
     regexp: '^root_authorized_keys_file='
     line: 'root_authorized_keys_file=authorized_keys'
 
 - name: SSHD config persistent
+  tags:
+    - deploy
+    - redeploy
   copy:
     remote_src: yes
     mode: preserve
@@ -63,14 +85,56 @@
 - name: Update script copied
   copy:
     src: files/update_smartos.sh
-    dest: /opt/local/
-    mode: 744
+    dest: "{{ binary_install_dir }}/"
+    mode: 0744
+
+- name: Init script installed
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/setup-init.sh
+    dest: "{{ binary_install_dir }}/setup-init.sh"
+    backup: no
+    mode: 0744
+
+- name: Init SMF copied
+  register: init_smf_file
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/setup-init.xml
+    dest: "{{ smf_install_dir }}/setup-init.xml"
+    backup: no
+    mode: 0644
+    validate: "svccfg validate %s"
+
+- name: Init SMF uninstalled
+  tags:
+    - destroy
+  command: svccfg delete site/setup/ipnat
+  args:
+    removes: /var/svc/manifest/site/setup-ipnat.xml
+
+- name: Init SMF installed
+  tags:
+    - deploy
+    - redeploy
+  command: svccfg import setup-init.xml
+  args:
+    chdir: "{{ smf_install_dir }}"
+  when: init_smf_file is changed
 
 - name: System rebooted
+  tags:
+    - deploy
   command: shutdown -y -g5 -i6
   when: etherstub.changed or authkeys.changed or keymap.changed
 
 - name: System online
+  tags:
+    - deploy
   wait_for_connection:
     connect_timeout: 20
     sleep: 10

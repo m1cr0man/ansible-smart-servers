@@ -1,11 +1,17 @@
 ---
 - name: Rsyslog config set
+  tags:
+    - deploy
+    - redeploy
   register: rsyslog_config_zone
   template:
     src: templates/rsyslog.conf.j2
     dest: "{{ '/opt/local/' if brand == 'joyent' else '' }}/etc/rsyslog.conf"
 
 - name: Rsyslog reloaded
+  tags:
+    - deploy
+    - redeploy
   service:
     name: rsyslog
     state: restarted

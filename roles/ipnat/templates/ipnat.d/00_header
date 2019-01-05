@@ -1,0 +1,2 @@
+map {{ baremetal_extnic }} 10.0.0.0/24 -> 0/32 portmap tcp/udp auto
+map {{ baremetal_extnic }} 10.0.0.0/24 -> 0/32

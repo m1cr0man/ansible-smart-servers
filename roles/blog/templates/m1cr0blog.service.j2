@@ -2,8 +2,8 @@
 Description=M1cr0blog
 
 [Service]
-WorkingDirectory={{ m1cr0blog_data_dir }}
-ExecStart={{ m1cr0blog_data_dir }}/app/node_modules/.bin/m1cr0blog
+WorkingDirectory={{ blog_data_dir }}
+ExecStart={{ blog_data_dir }}/node_modules/.bin/m1cr0blog
 TimeoutStopSec=2
 Restart=on-failure
 RestartSec=5

@@ -1,5 +1,7 @@
 ---
 - name: Node key added
+  tags:
+    - deploy
   apt_key:
     id: 68576280
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
@@ -7,35 +9,53 @@
 
 - name: Node repo added
   register: node_repo
+  tags:
+    - deploy
   apt_repository:
     repo: deb https://deb.nodesource.com/node_11.x xenial main
     state: present
 
 - name: Apt refreshed
+  tags:
+    - deploy
+    - redeploy
   apt:
     update_cache: yes
   when: node_repo is changed
 
 - name: Node installed
+  tags:
+    - deploy
+    - redeploy
   package:
     name: nodejs
-    state: present
+    state: latest
 
 - name: M1cr0blog updated
   register: m1cr0blog_install
+  tags:
+    - deploy
+    - redeploy
   npm:
     name: m1cr0blog
-    path: "{{ m1cr0blog_data_dir }}/app"
+    path: "{{ blog_data_dir }}"
+    production: yes
     state: latest
 
 - name: Service unit file copied
   register: m1cr0blog_unitfile
+  tags:
+    - deploy
+    - redeploy
   template:
     src: templates/m1cr0blog.service.j2
     dest: /etc/systemd/system/m1cr0blog.service
     mode: 0644
 
 - name: Service loaded
+  tags:
+    - deploy
+    - redeploy
   systemd:
     name: m1cr0blog
     state: restarted

@@ -1,6 +1,9 @@
 ---
 - name: config copied
   register: sshd_config
+  tags:
+    - deploy
+    - redeploy
   template:
     src: templates/sshd_config.j2
     dest: /etc/ssh/sshd_config
@@ -9,6 +12,9 @@
     validate: bash -c "test '{{ is_gz }}' = 'True' || sshd -t -f %s"
 
 - name: service restarted
+  tags:
+    - deploy
+    - redeploy
   service:
     name: ssh
     state: restarted

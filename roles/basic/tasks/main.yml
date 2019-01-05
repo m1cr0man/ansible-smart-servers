@@ -2,5 +2,8 @@
 - include: joyent.yml
   when: brand == 'joyent'
 
-- include: ubuntu.yml
+- tags:
+    - deploy
+    - redeploy
+  include_tasks: ubuntu.yml
   when: brand == 'lx' or brand == 'kvm'

@@ -8,26 +8,15 @@ export PATH="{{ default_path }}"
 
 case "$1" in
 'start')
+
   # Set up gateway vnic so baremetal can talk to vms
   if [ $(dladm show-vnic | grep gw0 | wc -l) -ne 1 ]; then
     dladm create-vnic -m 2:50:10:0:0:1 -l stub0 gw0
     ipadm create-addr -T static -a {{ address }}/24 gw0/v4
   fi
 
-  routeadm -u -e ipv4-forwarding
-
-  # Copy configs
-  cp -f /opt/custom/routing/*.conf /etc/ipf/
-  svcadm refresh ipfilter
-
   ;;
 'stop')
-  # Reset configs
-  echo -e "pass in all\npass out all keep state" > /etc/ipf/ipf.conf
-  rm /etc/ipf/ipnat.conf
-  svcadm refresh ipfilter
-
-  routeadm -u -d ipv4-forwarding
 
   # Delete gateway
   if [ $(dladm show-vnic | grep gw0 | wc -l) -eq 1 ]; then

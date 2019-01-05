@@ -2,7 +2,7 @@
 ansible_python_interpreter: python
 is_gz: no
 vmadm_image_uuid: 038c1972-8147-11e8-9201-7fbba6e573a0
-vmadm_resolvers:
+resolvers:
   - 8.8.8.8
   - 8.8.4.4
 vmadm_disks: []
@@ -14,10 +14,12 @@ gateway_address: 10.0.0.1
 metrics_address: 10.0.0.2
 datasets: []
 exposed_ports: []
+baremetal_extnic: rge0
 global_data_dataset: zones/data
 gopath: /opt/build/go
 binary_install_dir: /opt/custom/bin
+smf_install_dir: /opt/custom/smf
 config_dir: /opt/custom/etc
 default_path: /opt/custom/bin:/usr/local/sbin:/usr/local/bin:/opt/local/sbin:/opt/local/bin:/opt/tools/bin:/opt/tools/sbin:/usr/sbin:/usr/bin:/sbin:/usr/ccs/bin
 http_services: []
-brand: joyent
+brand: lx

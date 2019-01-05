@@ -1,0 +1,76 @@
+---
+- name: Config dir exists
+  tags:
+    - deploy
+  file:
+    path: "{{ ipf_config_dir }}"
+    state: directory
+
+- name: Base rules added
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ ipf_config_dir }}/{{ item.path }}"
+    mode: "{{ item.mode }}"
+    trim_blocks: no
+  with_filetree: templates/ipf.d/
+  when: item.state == "file"
+
+- name: Service script installed
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/setup-ipf.sh
+    dest: "{{ binary_install_dir }}/setup-ipf.sh"
+    backup: no
+    mode: 0744
+    trim_blocks: no
+
+- name: SMF copied
+  register: ipf_smf_file
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/setup-ipf.xml
+    dest: "{{ smf_install_dir }}/setup-ipf.xml"
+    backup: no
+    mode: 0644
+    trim_blocks: no
+    validate: "svccfg validate %s"
+
+- name: SMF uninstalled
+  tags:
+    - destroy
+  command: svccfg delete site/setup/ipnat
+  args:
+    removes: /var/svc/manifest/site/setup-ipnat.xml
+
+- name: SMF installed
+  tags:
+    - deploy
+    - redeploy
+  command: svccfg import setup-ipf.xml
+  args:
+    chdir: "{{ smf_install_dir }}"
+  when: ipf_smf_file is changed
+
+- name: SMF enabled
+  tags:
+    - deploy
+    - redeploy
+  service:
+    name: site/setup/ipf
+    enabled: yes
+
+- name: Service refreshed
+  tags:
+    - deploy
+    - redeploy
+  service:
+    name: site/setup/ipf
+    state: reloaded
+  when: ipf_smf_file is not changed

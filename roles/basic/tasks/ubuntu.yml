@@ -1,5 +1,8 @@
 ---
 - name: Packages updated
+  tags:
+    - deploy
+    - redeploy
   apt:
     update_cache: yes
     upgrade: full

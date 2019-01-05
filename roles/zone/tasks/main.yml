@@ -1,0 +1,89 @@
+---
+- name: Secrets loaded
+  tags:
+    - deploy
+    - redeploy
+  include_vars: secrets.yml
+
+- name: Zone destroyed
+  tags:
+    - redeploy
+    - destroy
+  vmadm:
+    alias: "{{ zone.inventory_hostname }}"
+    state: absent
+
+# Will not delete the image as it might be in use by other zones
+
+- name: Image downloaded
+  tags:
+    - deploy
+    - redeploy
+  imgadm:
+    uuid: "{{ zone.vmadm_image_uuid }}"
+    state: present
+
+- name: Zone created
+  tags:
+    - deploy
+    - redeploy
+  vmadm:
+  # These values differ per zone
+    brand: "{{ zone.brand }}"
+    alias: "{{ zone.inventory_hostname }}"
+    hostname: "{{ zone.inventory_hostname }}"
+    image_uuid: "{{ zone.vmadm_image_uuid }}"
+    max_physical_memory: "{{ zone.vmadm_ram }}"
+    max_swap: "{{ zone.vmadm_ram * 4 }}"
+    cpu_shares: "{{ zone.vmadm_cpu }}"
+    filesystems: "{{ filesystems | default([]) }}"
+    nics:
+      - nic_tag: stub0
+        ip: "{{ zone.address }}"
+        netmask: 255.255.255.0
+        gateway: "{{ gateway_address }}"
+        allow_ip_spoofing: yes
+  # These values are the same for every zone
+    state: present
+    autoboot: yes
+    zfs_root_compression: lz4
+    kernel_version: 4.4.0
+    resolvers: "{{ resolvers }}"
+    maintain_resolvers: yes
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_authkeys }}"
+      user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"
+
+- name: SSH port configured
+  tags:
+    - deploy
+    - redeploy
+  vars:
+    rules:
+      - id: "ssh_{{ zone.ansible_port }}"
+        src_port: "{{ zone.ansible_port }}"
+        dest_port: 22
+        dest_addr: "{{ zone.address }}"
+  include_role:
+    name: ipnat
+
+- name: SSH port unconfigured
+  tags:
+    - destroy
+  vars:
+    rules:
+      - id: "ssh_{{ zone.ansible_port }}"
+        state: absent
+  include_role:
+    name: ipnat
+
+- name: Zone booted
+  tags:
+    - deploy
+    - redeploy
+  wait_for:
+      host: "{{ zone.address }}"
+      port: 22
+      delay: 10
+      sleep: 10
+      timeout: 300

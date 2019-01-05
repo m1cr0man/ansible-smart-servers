@@ -1,0 +1,13 @@
+---
+- name: Python installed
+  hosts: baremetal
+  tags:
+    - deploy
+  roles:
+    - role: python
+
+- name: Baremetal configured
+  hosts: baremetal
+  roles:
+    - role: baremetal
+      delegate_to: "{{ groups.baremetal[0] }}"

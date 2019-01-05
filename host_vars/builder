@@ -1,3 +1,4 @@
 ---
+brand: joyent
 vmadm_ram: 2048
 vmadm_cpu: 5
