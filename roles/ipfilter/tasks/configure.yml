@@ -13,7 +13,7 @@
     backup: no
     mode: 0644
     trim_blocks: no
-    validate: /usr/sbin/ipfstat -n -f %s
+    validate: /usr/sbin/ipf -n -f %s
   with_items: "{{ rules }}"
   when: item.state is not defined or item.state == 'present'
 
