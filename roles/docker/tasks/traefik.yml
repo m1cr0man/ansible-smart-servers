@@ -3,7 +3,7 @@
     - deploy
     - redeploy
   set_fact:
-    influx_data_dir: /var/lib/traefik
+    traefik_config_dir: /etc/traefik
 
 - name: "traefik: Dataset created"
   tags:
@@ -26,6 +26,13 @@
     - traefik.htpasswd
     - traefik.toml
 
+- name: "traefik: Ansible configs dir created"
+  tags:
+    - deploy
+  file:
+    path: "/{{ global_data_dataset }}/traefik/traefik.d"
+    state: directory
+
 - name: "traefik: Zone"
   vars:
     hostname: traefik
@@ -34,14 +41,36 @@
     vmadm_cpu: 25
     vmadm_ram: 256
     filesystems:
-      - type: hyprlofs
+      - type: lofs
         source: "/{{ global_data_dataset }}/traefik"
-        target: "{{ influx_data_dir }}"
+        target: "{{ traefik_config_dir }}"
         options:
           - nodevice
-    envvars:
-      - "INFLUXDB_CONFIG_PATH={{ influx_data_dir }}/traefik.toml"
   include: deploy.yml
+
+- name: "traefik: NAT unconfigured"
+  tags:
+    - destroy
+  vars:
+    rules:
+      - id: traefik
+        state: absent
+  import_role:
+    name: ipnat
+
+- name: "traefik: NAT configured"
+  tags:
+    - deploy
+    - redeploy
+  vars:
+    rules:
+      - id: traefik
+        src_port: 80
+        dest_port: 80
+        dest_addr: 10.0.0.4
+        state: present
+  import_role:
+    name: ipnat
 
 - name: "traefik: Dataset deleted"
   tags:

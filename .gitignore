@@ -6,3 +6,5 @@ host_vars/dev
 .vscode
 .idea/
 ansible-smart-servers.iml
+modules/
+!modules/smartos/vmadm.py

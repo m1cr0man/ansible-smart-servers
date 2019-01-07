@@ -1,0 +1,12 @@
+[frontends]
+  [frontends.{{ item.name }}]
+    backend = "{{ item.backend }}_back"
+    passHostHeader = true
+{% if item.protect | default(false) %}
+    [frontends.{{ item.name }}.auth]
+      [frontends.{{ item.name }}.auth.basic]
+        removeHeader = true
+        usersFile = "{{ traefik_local_config_dir }}/traefik.htpasswd"
+{%- endif %}
+    [frontends.{{ item.name }}.routes.route_primary]
+      rule = "{{ item.rule }}"

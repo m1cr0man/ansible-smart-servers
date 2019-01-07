@@ -1,0 +1,5 @@
+[backends]
+  [backends.{{ item.name }}_back]
+    [backends.{{ item.name }}_back.servers.{{ item.id }}]
+      url = "http://{{ item.address }}:{{ item.port }}{{ item.path | default('') }}"
+      weight = {{ item.weight | default(1) }}

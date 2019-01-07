@@ -2,6 +2,7 @@
 - name: Node key added
   tags:
     - deploy
+    - redeploy
   apt_key:
     id: 68576280
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
@@ -11,6 +12,7 @@
   register: node_repo
   tags:
     - deploy
+    - redeploy
   apt_repository:
     repo: deb https://deb.nodesource.com/node_11.x xenial main
     state: present
@@ -23,13 +25,17 @@
     update_cache: yes
   when: node_repo is changed
 
-- name: Node installed
+- name: Dependencies installed
   tags:
     - deploy
     - redeploy
   package:
-    name: nodejs
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - nodejs
+    - make
+    - g++
 
 - name: M1cr0blog updated
   register: m1cr0blog_install

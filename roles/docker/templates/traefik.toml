@@ -6,33 +6,5 @@ defaultEntryPoints = ["http"]
     address = ":80"
 
 [file]
-watch = false
-
-[backends]
-{% for host in query('inventory_hostnames', 'all') | sort -%}
-{% for svc in hostvars[host].http_services %}
-  [backends.{{ svc.name }}_back]
-    [backends.{{ svc.name }}_back.servers.server{{ loop.index }}]
-      url = "http://{{ svc.address | default(hostvars[host].address) }}:{{ svc.port }}{{ svc.path | default('') }}"
-      weight = {{ loop.index * 10 }}
-{% endfor -%}
-{% endfor %}
-
-[frontends]
-{% for host in query('inventory_hostnames', 'all') | sort -%}
-{% for svc in hostvars[host].http_services %}
-{% for route in svc.routes %}
-  [frontends.{{ svc.name }}_{{ route.name }}]
-    backend = "{{ svc.name }}_back"
-    passHostHeader = true
-{% if svc.protect | default(false) %}
-    [frontends.{{ svc.name }}_{{ route.name }}.auth]
-      [frontends.{{ svc.name }}_{{ route.name }}.auth.basic]
-        removeHeader = true
-        usersFile = "{{ config_dir }}/traefik.htpasswd"
-{% endif -%}
-    [frontends.{{ svc.name }}_{{ route.name }}.routes.route_1]
-      rule = "{{ route.rule }}"
-{% endfor -%}
-{% endfor %}
-{% endfor %}
+watch = true
+directory = "{{ traefik_config_dir }}/traefik.d"

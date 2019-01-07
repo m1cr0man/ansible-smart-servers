@@ -1,0 +1,5 @@
+---
+- name: Docker zones configured
+  hosts: baremetal
+  roles:
+    - role: docker

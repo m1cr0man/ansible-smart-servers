@@ -1,10 +1,3 @@
 ---
-- include: build.yml
-  environment:
-    GOPATH: "{{ gopath }}"
-    GOBIN: "{{ gopath }}/bin"
-    PATH: "{{ gopath }}/bin:{{ default_path }}"
-  when: inventory_hostname == 'builder'
-
-- include: install.yml
-  when: inventory_hostname != 'builder'
+- import_tasks: configure.yml
+  when: frontends is defined or backends is defined

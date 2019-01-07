@@ -71,3 +71,7 @@
       'docker:workingdir': "{{ image_config['WorkingDir'] }}"
       'docker:workdir': "{{ image_config['WorkingDir'] }}"
       'docker:extraHosts': "{{ hosts | default([]) | tojson | string }}"
+      'docker:open_stdin': 'true'
+      'docker:attach_stdout': 'true'
+      'docker:attach_stderr': 'true'
+      'docker:tty': 'true'

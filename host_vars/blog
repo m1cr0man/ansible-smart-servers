@@ -2,11 +2,3 @@
 vmadm_image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
 vmadm_ram: 512
 vmadm_cpu: 10
-http_services:
-  - name: m1cr0blog
-    routes:
-      - name: blog
-        rule: "Host:m1cr0man.com,www.m1cr0man.com,localhost"
-      - name: uploads
-        rule: "Host:u.m1cr0man.com;AddPrefix:/uploads/"
-    port: 3000

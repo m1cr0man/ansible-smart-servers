@@ -1,0 +1,92 @@
+---
+- name: Dataset created
+  hosts: baremetal
+  tags:
+    - deploy
+  tasks:
+    - zfs:
+        name: "{{ global_data_dataset }}/blog"
+        state: present
+
+- name: Traefik unconfigured
+  hosts: baremetal
+  tags:
+    - destroy
+  vars:
+    frontends:
+      - name: blog
+        state: absent
+      - name: uploads
+        state: absent
+    backends:
+      - name: blog
+        id: prod
+        state: absent
+  roles:
+    - role: traefik
+
+- name: Zone deployed
+  hosts: blog
+  gather_facts: no
+  vars:
+    zone: "{{ hostvars.blog }}"
+    filesystems:
+      - type: lofs
+        source: "/{{ global_data_dataset }}/blog"
+        target: "/blog"
+        options:
+          - nodevice
+  roles:
+    - role: zone
+      delegate_to: "{{ groups.baremetal[0] }}"
+
+- name: Zone configured
+  hosts: blog
+  gather_facts: no
+  vars:
+    blog_data_dir: "/blog"
+  tasks:
+    - name: Gather facts
+      tags:
+        - deploy
+        - redeploy
+      setup: {}
+  roles:
+    # - role: basic
+    - role: ssh
+    - role: rsyslog
+    - role: blog
+
+- name: Traefik configured
+  hosts: baremetal
+  tags:
+    - deploy
+    - redeploy
+  vars:
+    frontends:
+      - name: blog
+        backend: blog
+        rule: "Host:m1cr0man.com,www.m1cr0man.com,localhost"
+        state: present
+      - name: uploads
+        backend: blog
+        rule: "Host:u.m1cr0man.com;AddPrefix:/uploads/"
+        state: present
+    backends:
+      - name: blog
+        id: prod
+        address: 10.0.0.10
+        port: 3000
+        weight: 1
+        state: present
+  roles:
+    - role: traefik
+
+- name: Dataset deleted
+  hosts: baremetal
+  tags:
+    - destroy
+  tasks:
+    - zfs:
+        name: "{{ global_data_dataset }}/blog"
+        state: absent

@@ -1,0 +1,39 @@
+---
+- name: Frontends unconfigured
+  file:
+    path: "{{ traefik_config_dir }}/50_frontend_{{ item.name }}.toml"
+    state: absent
+  with_items: "{{ frontends }}"
+  when: item.state is defined and item.state == 'absent'
+
+- name: Backends unconfigured
+  file:
+    path: "{{ traefik_config_dir }}/50_backend_{{ item.name }}_{{ item.id }}.toml"
+    state: absent
+  with_items: "{{ backends }}"
+  when: item.state is defined and item.state == 'absent'
+
+- name: Backends configured
+  template:
+    src: templates/50_backend.toml
+    dest: "{{ traefik_config_dir }}/50_backend_{{ item.name }}_{{ item.id }}.toml"
+    backup: no
+    mode: 0644
+    trim_blocks: no
+  with_items: "{{ backends }}"
+  when: item.state is not defined or item.state == 'present'
+
+- name: Frontends configured
+  template:
+    src: templates/50_frontend.toml
+    dest: "{{ traefik_config_dir }}/50_frontend_{{ item.name }}.toml"
+    backup: no
+    mode: 0644
+    trim_blocks: no
+  with_items: "{{ frontends }}"
+  when: item.state is not defined or item.state == 'present'
+
+- name: Traefik reloaded
+  vmadm:
+    alias: traefik
+    state: restarted

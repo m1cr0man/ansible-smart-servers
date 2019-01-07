@@ -13,6 +13,11 @@
     type: docker
     state: present
 
+- name: traefik
+  tags:
+    - traefik
+  include_tasks: traefik.yml
+
 - name: influxdb
   tags:
     - influxdb
@@ -22,8 +27,3 @@
   tags:
     - chronograf
   include_tasks: chronograf.yml
-
-- name: traefik
-  tags:
-    - traefik
-  include_tasks: traefik.yml

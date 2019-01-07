@@ -1,2 +1,3 @@
 ---
-traefik_config_dir: "{{ global_data_datset }}/traefik/traefik.d"
+traefik_config_dir: "/{{ global_data_dataset }}/traefik/traefik.d"
+traefik_local_config_dir: "/etc/traefik"
