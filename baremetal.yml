@@ -10,4 +10,3 @@
   hosts: baremetal
   roles:
     - role: baremetal
-      delegate_to: "{{ groups.baremetal[0] }}"
