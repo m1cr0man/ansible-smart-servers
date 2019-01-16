@@ -10,3 +10,29 @@
   hosts: baremetal
   roles:
     - role: baremetal
+
+- name: "abstruse: Traefik configured"
+  hosts: baremetal
+  tags:
+    - deploy
+    - redeploy
+  vars:
+    frontends:
+      - name: abstruse
+        backend: abstruse
+        protect: yes
+        rule: "Host:ci.m1cr0man.com"
+        state: present
+      - name: abstruse_webhook
+        backend: abstruse
+        rule: "Host:cihook.m1cr0man.com;AddPrefix:/webhooks/github"
+        state: present
+    backends:
+      - name: abstruse
+        id: prod
+        address: 10.0.0.20
+        port: 6500
+        weight: 1
+        state: present
+  roles:
+    - role: traefik
