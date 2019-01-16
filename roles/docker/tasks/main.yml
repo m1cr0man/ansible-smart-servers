@@ -27,3 +27,8 @@
   tags:
     - chronograf
   include_tasks: chronograf.yml
+
+- name: minio
+  tags:
+    - minio
+  include_tasks: minio.yml

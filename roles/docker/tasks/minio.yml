@@ -1,0 +1,88 @@
+---
+- name: "minio: Dataset created"
+  tags:
+    - deploy
+  zfs:
+    name: "{{ global_data_dataset }}/minio"
+    state: present
+
+- name: "minio: Data folder created"
+  tags:
+    - deploy
+  file:
+    path: "/{{ global_data_dataset }}/minio/data"
+    state: directory
+
+- name: "minio: Config folder created"
+  tags:
+    - deploy
+  file:
+    path: "/{{ global_data_dataset }}/minio/config"
+    state: directory
+
+- name: "minio: Zone configured"
+  vars:
+    hostname: minio
+    address: 10.0.0.5
+    image_tag: minio/minio:latest
+    vmadm_cpu: 5
+    vmadm_ram: 512
+    filesystems:
+      - type: lofs
+        source: "/{{ global_data_dataset }}/minio/data"
+        target: /data
+        options:
+          - nodevice
+      - type: lofs
+        source: "/{{ global_data_dataset }}/minio/config"
+        target: /root/.minio
+        options:
+          - nodevice
+    cmd:
+      - server
+      - /data
+    envvars:
+      - "MINIO_ACCESS_KEY={{ minio_access_key }}"
+      - "MINIO_SECRET_KEY={{ minio_secret_key }}"
+  include: deploy.yml
+
+- name: "minio: Traefik unconfigured"
+  tags:
+    - destroy
+  vars:
+    frontends:
+      - name: minio
+        state: absent
+    backends:
+      - name: minio
+        id: prod
+        state: absent
+  import_role:
+    name: traefik
+
+- name: "minio: Traefik configured"
+  tags:
+    - deploy
+    - redeploy
+  vars:
+    frontends:
+      - name: minio
+        backend: minio
+        rule: "Host:s3.m1cr0man.com"
+        state: present
+    backends:
+      - name: minio
+        id: prod
+        address: 10.0.0.5
+        port: 9000
+        weight: 1
+        state: present
+  import_role:
+    name: traefik
+
+- name: "minio: Dataset deleted"
+  tags:
+    - destroy
+  zfs:
+    name: "{{ global_data_dataset }}/minio"
+    state: absent
