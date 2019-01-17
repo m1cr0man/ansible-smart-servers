@@ -1,10 +1,15 @@
 ---
 - name: Install directory exists
+  tags:
+    - deploy
   file:
     path: "{{ binary_install_dir }}"
     state: directory
 
 - name: Binaries copied
+  tags:
+    - deploy
+    - redeploy
   register: mc_binary
   delegate_to: "{{ inventory_hostname }}"
   synchronize:
