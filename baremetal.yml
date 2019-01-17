@@ -16,6 +16,7 @@
   tags:
     - deploy
     - redeploy
+    - traefik
   vars:
     frontends:
       - name: abstruse
@@ -31,3 +32,24 @@
         state: present
   roles:
     - role: traefik
+
+- name: "cianky: NAT configured"
+  hosts: baremetal
+  tags:
+    - deploy
+    - redeploy
+    - cianky
+  vars:
+    rules:
+      - id: cianky_mc
+        src_port: 25570
+        dest_port: 25565
+        dest_addr: 10.0.0.103
+        state: present
+      - id: cianky_ssh
+        src_port: 2303
+        dest_port: 22
+        dest_addr: 10.0.0.103
+        state: present
+  roles:
+    - role: ipnat
