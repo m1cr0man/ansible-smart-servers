@@ -2,7 +2,7 @@
 
 Deploys a number of services into joyent-brand zones on a SmartOS server
 
-Requires Ansible 2.5+
+Requires Ansible 2.8+
 
 Current roles:
 
@@ -11,10 +11,15 @@ Current roles:
 - Rsyncd
 - Rsyslog
 - M1cr0blog
-- InfluxDB
-- Chronograf
-- Telegraf
-- Traefik
+- Minio Client (mc)
+- Docker contaniers
+    - InfluxDB
+    - Chronograf
+    - Telegraf
+    - Traefik
+    - Minio
+- traefik routes
+- ipf rules
 
 Dependencies:
 
@@ -25,6 +30,4 @@ Dependencies:
 
 - Installing Minecraft server
 - KVM support
-- Use loFS extended mounts
-- Zone update support
 - Detailed Readme

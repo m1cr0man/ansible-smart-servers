@@ -8,3 +8,6 @@ host_vars/dev
 ansible-smart-servers.iml
 modules/
 !modules/smartos/vmadm.py
+
+__pycache__
+*.pyc
