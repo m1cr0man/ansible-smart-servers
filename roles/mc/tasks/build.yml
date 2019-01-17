@@ -1,0 +1,28 @@
+---
+- name: Gopath exists
+  file:
+    path: "{{ gopath }}"
+    state: directory
+
+- name: System dependencies installed
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - go
+    - git
+    - gcc49
+    - gmake
+
+- name: Mc downloaded
+  command: go get -d github.com/minio/mc
+  args:
+    creates: "{{ gopath }}/src/github.com/minio/mc"
+
+- name: Mc built
+  command: make
+  vars:
+    mc_binary: "{{ gopath }}/src/github.com/minio/mc/mc"
+  args:
+    chdir: "{{ gopath }}/src/github.com/minio/mc"
+  when: mc_binary is not exists
