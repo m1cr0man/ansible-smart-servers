@@ -1,0 +1,14 @@
+---
+- name: Install directory exists
+  file:
+    path: "{{ binary_install_dir }}"
+    state: directory
+
+- name: Binaries copied
+  register: mc_binary
+  delegate_to: "{{ inventory_hostname }}"
+  synchronize:
+    mode: pull
+    checksum: yes
+    src: "rsync://builder{{ gopath }}/src/github.com/minio/mc/mc"
+    dest: "{{ binary_install_dir }}/"

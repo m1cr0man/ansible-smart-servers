@@ -10,6 +10,7 @@
   hosts: baremetal
   roles:
     - role: baremetal
+    - role: mc
 
 - name: "abstruse: Traefik configured"
   hosts: baremetal
