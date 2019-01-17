@@ -62,6 +62,7 @@
   tags:
     - deploy
     - redeploy
+    - traefik
   vars:
     frontends:
       - name: blog
@@ -70,7 +71,7 @@
         state: present
       - name: uploads
         backend: blog
-        rule: "Host:u.m1cr0man.com;AddPrefix:/uploads/"
+        rule: "Host:u.m1cr0man.com;ReplacePathRegex:^/([a-zA-Z0-9]+)/([a-zA-Z0-9]+)/?$ /upload/$1/$2"
         state: present
     backends:
       - name: blog

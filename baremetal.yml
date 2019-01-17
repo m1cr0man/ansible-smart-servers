@@ -20,12 +20,7 @@
     frontends:
       - name: abstruse
         backend: abstruse
-        protect: yes
         rule: "Host:ci.m1cr0man.com"
-        state: present
-      - name: abstruse_webhook
-        backend: abstruse
-        rule: "Host:cihook.m1cr0man.com;AddPrefix:/webhooks/github"
         state: present
     backends:
       - name: abstruse
