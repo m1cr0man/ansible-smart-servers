@@ -1,0 +1,18 @@
+---
+- name: Syslog-ng config set
+  tags:
+    - deploy
+    - redeploy
+  register: syslog-ng_config_zone
+  template:
+    src: templates/syslog-ng-log.m1cr0man
+    dest: "{{ '/opt/local/' if brand == 'joyent' else '' }}/etc/syslog-ng/syslog-ng-log.m1cr0man"
+
+- name: Syslog-ng reloaded
+  tags:
+    - deploy
+    - redeploy
+  service:
+    name: syslog-ng
+    state: restarted
+  when: syslog-ng_config_zone.changed

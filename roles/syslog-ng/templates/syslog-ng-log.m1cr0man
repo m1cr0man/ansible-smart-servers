@@ -1,0 +1,8 @@
+destination ds_hypervisor {
+  syslog("10.0.0.1" transport("udp") port(514));
+};
+
+log {
+    source(s_all);
+    destination(ds_hypervisor);
+};
