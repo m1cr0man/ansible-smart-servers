@@ -6,11 +6,19 @@
     path: "{{ binary_install_dir }}"
     state: directory
 
+- name: Local server configured
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/config.json
+    dest: ~/.mc/config.json
+    mode: 0644
+
 - name: Binaries copied
   tags:
     - deploy
     - redeploy
-  register: mc_binary
   delegate_to: "{{ inventory_hostname }}"
   synchronize:
     mode: pull

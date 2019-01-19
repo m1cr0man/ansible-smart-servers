@@ -15,6 +15,11 @@ case "$1" in
     ipadm create-addr -T static -a {{ address }}/24 gw0/v4
   fi
 
+  # Link minio client config to persistent storage
+  rm -rf /root/.mc
+  mkdir /root/.mc
+  ln -s /usbkey/.mc /root/.mc
+
   ;;
 'stop')
 
@@ -24,6 +29,9 @@ case "$1" in
     ipadm delete-if gw0
     dladm delete-vnic gw0
   fi
+
+  # Remove minio client config link
+  rm -rf /root/.mc
 
   ;;
 *)

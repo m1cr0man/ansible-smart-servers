@@ -7,7 +7,6 @@ Requires Ansible 2.8+
 Current roles:
 
 - Bare metal (deploys zones)
-- Gateway (manages firewalling and routing)
 - Rsyncd
 - Rsyslog
 - M1cr0blog

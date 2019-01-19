@@ -11,6 +11,7 @@
   roles:
     - role: baremetal
     - role: mc
+    - role: image_import
 
 - name: "abstruse: Traefik configured"
   hosts: baremetal
