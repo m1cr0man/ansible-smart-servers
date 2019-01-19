@@ -10,11 +10,9 @@ function update_image {
 
     local latest_date="$(mc cat m1s3/artifacts/zones/${name}-latest.txt)"
 
-    if [ ! -e "${CACHE}/lx-${name}-${latest_date}*" ]; then
-        rm "${CACHE}/lx-${name}"*
-        mc cp "m1s3/artifacts/zones/lx-${name}-${latest_date}"{.json,.zfs.gz} "${CACHE}/"
-        imgadm install -m "${CACHE}/lx-${name}-${latest_date}.json" -f "${CACHE}/lx-${name}-${latest_date}.zfs.gz"
-    fi
+    rm "${CACHE}/lx-${name}"*
+    mc cp "m1s3/artifacts/zones/lx-${name}-${latest_date}"{.json,.zfs.gz} "${CACHE}/"
+    imgadm install -m "${CACHE}/lx-${name}-${latest_date}.json" -f "${CACHE}/lx-${name}-${latest_date}.zfs.gz"
 }
 
 function main {
