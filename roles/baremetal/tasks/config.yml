@@ -126,6 +126,16 @@
     chdir: "{{ smf_install_dir }}"
   when: init_smf_file is changed
 
+- name: update-images script installed
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/update-images.sh
+    dest: "{{ binary_install_dir }}/update-images.sh"
+    backup: no
+    mode: 0744
+
 - name: System rebooted
   tags:
     - deploy

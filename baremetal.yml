@@ -11,7 +11,6 @@
   roles:
     - role: baremetal
     - role: mc
-    - role: image_import
 
 - name: "abstruse: Traefik configured"
   hosts: baremetal
@@ -52,6 +51,26 @@
         src_port: 2303
         dest_port: 22
         dest_addr: 10.0.0.103
+        state: present
+      - id: openttd
+        src_port: 3979
+        dest_port: 3979
+        dest_addr: 10.0.0.10
+        state: present
+      - id: openttd_udp
+        src_port: 3979
+        dest_port: 3979 udp
+        dest_addr: 10.0.0.10
+        state: present
+      - id: openttd_ms
+        src_port: 3978
+        dest_port: 3978
+        dest_addr: 10.0.0.10
+        state: present
+      - id: openttd_ms_udp
+        src_port: 3978
+        dest_port: 3978 udp
+        dest_addr: 10.0.0.10
         state: present
   roles:
     - role: ipnat

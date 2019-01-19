@@ -16,8 +16,6 @@ case "$1" in
   fi
 
   # Link minio client config to persistent storage
-  rm -rf /root/.mc
-  mkdir /root/.mc
   ln -s /usbkey/.mc /root/.mc
 
   ;;
