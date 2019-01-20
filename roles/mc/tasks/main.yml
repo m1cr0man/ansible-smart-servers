@@ -6,5 +6,11 @@
     PATH: "{{ gopath }}/bin:{{ default_path }}"
   when: inventory_hostname == 'builder'
 
+- include: install_lx.yml
+  when: brand == 'lx'
+
 - include: install.yml
+  when: brand != 'lx' and inventory_hostname != 'builder'
+
+- include: config.yml
   when: inventory_hostname != 'builder'

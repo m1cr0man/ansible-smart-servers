@@ -1,0 +1,9 @@
+---
+- name: Binary downloaded
+  tags:
+    - deploy
+    - redeploy
+  get_url:
+    url: https://dl.minio.io/client/mc/release/linux-amd64/mc
+    dest: /bin/mc
+    mode: 0755

@@ -1,0 +1,21 @@
+---
+- name: Secrets loaded
+  tags:
+    - always
+  include_vars: secrets.yml
+
+- name: Config directory exists
+  tags:
+    - deploy
+  file:
+    path: ~/.mc/
+    state: directory
+
+- name: Local server configured
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/config.json
+    dest: ~/.mc/config.json
+    mode: 0644
