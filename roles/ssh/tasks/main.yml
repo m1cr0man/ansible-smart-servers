@@ -11,11 +11,20 @@
     mode: 0644
     validate: bash -c "test '{{ is_gz }}' = 'True' || sshd -t -f %s"
 
-- name: service restarted
+- name: service restarted (Alpine)
+  tags:
+    - deploy
+    - redeploy
+  service:
+    name: sshd
+    state: restarted
+  when: sshd_config is changed and ansible_distribution == 'Alpine'
+
+- name: service restarted (others)
   tags:
     - deploy
     - redeploy
   service:
     name: ssh
     state: restarted
-  when: sshd_config is changed
+  when: sshd_config is changed and ansible_distribution != 'Alpine'

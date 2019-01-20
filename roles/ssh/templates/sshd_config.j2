@@ -44,9 +44,11 @@ PubkeyAuthentication    yes
 IgnoreRhosts            yes
 PermitEmptyPasswords    no
 PasswordAuthentication  no
+{% if ansible_distribution != 'Alpine' %}
 GSSAPIAuthentication    no
 GSSAPIKeyExchange       no
 KerberosAuthentication  no
+{% endif %}
 MaxStartups             5:40:10
 MaxAuthTries            4
 MaxSessions             3
