@@ -1,0 +1,5 @@
+---
+openttd_version: 1.8.0
+openttd_install_dir: /opt/openttd_game
+openttd_data_dir: /opt/custom/etc/openttd
+openttd_data_archive: m1s3/artifacts/openttd.tar.gz

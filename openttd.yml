@@ -1,0 +1,39 @@
+---
+- name: Zone deployed
+  hosts: baremetal
+  vars:
+    zone: "{{ hostvars.openttd }}"
+    ports:
+      - id: openttd
+        src: 3979
+        dest: 3979
+      - id: openttd_udp
+        src: 3979
+        dest: 3979 udp
+      - id: openttd_ms
+        src: 3978
+        dest: 3978
+      - id: openttd_rcon
+        src: 3977
+        dest: 3977
+    filesystems:
+      - type: lofs
+        source: "/{{ global_data_dataset }}/openttd"
+        target: "/openttd"
+        options:
+          - nodevice
+    manage_filesystems: yes
+  roles:
+    - role: zone
+
+- name: Zone configured
+  hosts: openttd
+  vars:
+    openttd_install_dir: /openttd/openttd_game
+    openttd_data_dir: /openttd/craigmeup
+    openttd_data_archive: m1s3/artifacts/openttd_craigmeup.tar.gz
+  roles:
+    - role: ssh
+    - role: syslog-ng
+    - role: mc
+    - role: openttd

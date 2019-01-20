@@ -1,0 +1,78 @@
+---
+- name: Game deleted
+  tags:
+    - destroy
+  file:
+    path: "{{ openttd_install_dir }}"
+    state: absent
+
+- name: Dependencies installed
+  tags:
+    - deploy
+    - redeploy
+  apt:
+    name:
+      - screen
+      - libsdl1.2debian
+      - libfontconfig1
+    update_cache: yes
+    state: present
+
+- name: Folders exist
+  tags:
+    - deploy
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ openttd_install_dir }}"
+    - "{{ openttd_data_dir }}"
+
+- name: Game downloaded
+  tags:
+    - deploy
+    - redeploy
+  unarchive:
+    src: "http://binaries.openttd.org/releases/{{ openttd_version }}/openttd-{{ openttd_version }}-linux-generic-amd64.tar.gz"
+    dest: "{{ openttd_install_dir }}/"
+    creates: "{{ openttd_install_dir }}/openttd"
+    remote_src: yes
+    extra_opts:
+     - --strip-components=1
+
+- name: Data downloaded
+  tags:
+    - deploy
+    - redeploy
+  command: mc cp {{ openttd_data_archive }} .
+  args:
+    chdir: "{{ openttd_data_dir }}"
+
+- name: Data extracted
+  tags:
+    - deploy
+    - redeploy
+  unarchive:
+    src: "{{ openttd_data_dir }}/{{ openttd_data_archive | basename }}"
+    dest: "{{ openttd_data_dir }}/"
+    remote_src: yes
+
+- name: Game service installed
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/openttd.service
+    dest: /etc/systemd/system/openttd.service
+    backup: no
+    mode: 0755
+
+- name: Service started
+  tags:
+    - deploy
+    - redeploy
+  systemd:
+    name: openttd
+    enabled: yes
+    daemon_reload: yes
+    state: started

@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenTTD Server
+
+[Service]
+WorkingDirectory={{ openttd_data_dir }}
+ExecStart={{ openttd_install_dir }}/openttd -D
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
