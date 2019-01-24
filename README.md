@@ -10,6 +10,7 @@ Current roles:
 - Rsyncd
 - Rsyslog
 - M1cr0blog
+- OpenTTD
 - Minio Client (mc)
 - Docker contaniers
     - InfluxDB
@@ -28,5 +29,8 @@ Dependencies:
 ## TODO
 
 - Installing Minecraft server
-- KVM support
 - Detailed Readme
+- Base zone config
+    - mail spooler
+- Refactor VM deploy
+- Update baremetal deploy

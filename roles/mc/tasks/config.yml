@@ -7,6 +7,7 @@
 - name: Config directory exists
   tags:
     - deploy
+    - redeploy
   file:
     path: ~/.mc/
     state: directory

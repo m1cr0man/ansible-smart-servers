@@ -62,6 +62,15 @@
     dest: /usbkey/config.inc/authorized_keys
     mode: 0400
 
+- name: live authorized_keys file added
+  tags:
+    - deploy
+    - redeploy
+  copy:
+    content: "{{ ssh_authkeys }}"
+    dest: ~/.ssh/authorized_keys
+    mode: 0400
+
 - name: authorized_keys configured
   register: authkeys
   tags:
