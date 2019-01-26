@@ -31,7 +31,7 @@
   vars:
     openttd_install_dir: /openttd/openttd_game
     openttd_data_dir: /openttd/craigmeup
-    openttd_data_archive: m1s3/artifacts/openttd_craigmeup.tar.gz
+    openttd_data_archive: m1s3/artifacts/openttd_craigmeup_2019-01-26.tar.gz
   roles:
     - role: ssh
     - role: syslog-ng
