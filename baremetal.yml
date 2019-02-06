@@ -52,5 +52,15 @@
         dest_port: 22
         dest_addr: 10.0.0.103
         state: present
+      - id: ciaran_vnc
+        src_port: 6140
+        dest_port: 5901
+        dest_addr: 10.0.0.240
+        state: present
+      - id: abstruse
+        src_port: 6500
+        dest_port: 6500
+        dest_addr: 10.0.0.20
+        state: present
   roles:
     - role: ipnat
