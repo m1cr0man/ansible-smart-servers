@@ -3,6 +3,8 @@ blog ansible_host=144.76.44.123 ansible_port=2210 address=10.0.0.10
 [lxzones]
 openttd ansible_host=144.76.44.123 ansible_port=2250 address=10.0.0.50
 minecraft ansible_host=144.76.44.123 ansible_port=2251 address=10.0.0.51
+ca4011 ansible_host=144.76.44.123 ansible_port=2252 address=10.0.0.52
+shane_project ansible_host=144.76.44.123 ansible_port=2253 address=10.0.0.53
 
 [baremetal]
 gelandewagen ansible_host=144.76.44.123 address=10.0.0.1 baremetal_extnic=rge0

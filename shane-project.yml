@@ -1,0 +1,88 @@
+---
+- name: Dataset created
+  hosts: baremetal
+  tags:
+    - deploy
+  tasks:
+    - zfs:
+        name: "{{ global_data_dataset }}/shane_project"
+        state: present
+
+- name: Traefik unconfigured
+  hosts: baremetal
+  tags:
+    - destroy
+  vars:
+    frontends:
+      - name: shane_project
+        state: absent
+      - name: uploads
+        state: absent
+    backends:
+      - name: shane_project
+        id: prod
+        state: absent
+  roles:
+    - role: traefik
+
+- name: Zone deployed
+  hosts: shane_project
+  gather_facts: no
+  vars:
+    zone: "{{ hostvars.shane_project }}"
+    filesystems:
+      - type: lofs
+        source: "/{{ global_data_dataset }}/shane_project"
+        target: "/shane_project"
+        options:
+          - nodevice
+  roles:
+    - role: zone
+      delegate_to: "{{ groups.baremetal[0] }}"
+
+- name: Zone configured
+  hosts: shane_project
+  vars:
+    shane_project_data_dir: "/shane_project"
+  tasks:
+    - name: Gather facts
+      tags:
+        - deploy
+        - redeploy
+      setup: {}
+  roles:
+    # - role: basic
+    - role: ssh
+    - role: rsyslog
+    - role: shane_project
+
+- name: Traefik configured
+  hosts: baremetal
+  tags:
+    - deploy
+    - redeploy
+    - traefik
+  vars:
+    frontends:
+      - name: shane_project
+        backend: shane_project
+        rule: "Host:daly.m1cr0man.com,www.daly.m1cr0man.com"
+        state: present
+    backends:
+      - name: shane_project
+        id: prod
+        address: 10.0.0.53
+        port: 3000
+        weight: 1
+        state: present
+  roles:
+    - role: traefik
+
+- name: Dataset deleted
+  hosts: baremetal
+  tags:
+    - destroy
+  tasks:
+    - zfs:
+        name: "{{ global_data_dataset }}/shane_project"
+        state: absent

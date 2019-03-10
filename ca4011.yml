@@ -1,0 +1,46 @@
+---
+- name: Dataset created
+  hosts: baremetal
+  tags:
+    - deploy
+  tasks:
+    - zfs:
+        name: "{{ global_data_dataset }}/ca4011"
+        state: present
+
+- name: Zone deployed
+  hosts: ca4011
+  gather_facts: no
+  vars:
+    zone: "{{ hostvars.ca4011 }}"
+    filesystems:
+      - type: lofs
+        source: "/{{ global_data_dataset }}/ca4011"
+        target: "/ca4011"
+        options:
+          - nodevice
+  roles:
+    - role: zone
+      delegate_to: "{{ groups.baremetal[0] }}"
+
+- name: Zone configured
+  hosts: ca4011
+  tasks:
+    - name: Gather facts
+      tags:
+        - deploy
+        - redeploy
+      setup: {}
+  roles:
+    # - role: basic
+    - role: ssh
+    - role: rsyslog
+
+- name: Dataset deleted
+  hosts: baremetal
+  tags:
+    - destroy
+  tasks:
+    - zfs:
+        name: "{{ global_data_dataset }}/ca4011"
+        state: absent

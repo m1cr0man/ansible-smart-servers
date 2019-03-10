@@ -1,0 +1,11 @@
+---
+- name: Packages installed
+  tags:
+    - deploy
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  loop:
+    - postgresql
+    - nodejs
