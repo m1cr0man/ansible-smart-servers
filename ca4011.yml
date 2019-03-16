@@ -36,6 +36,28 @@
     - role: ssh
     - role: rsyslog
 
+- name: Traefik configured
+  hosts: baremetal
+  tags:
+    - deploy
+    - redeploy
+    - traefik
+  vars:
+    frontends:
+      - name: ca4011_project
+        backend: ca4011_project
+        rule: "Host:ca4011.m1cr0man.com,www.ca4011.m1cr0man.com"
+        state: present
+    backends:
+      - name: ca4011_project
+        id: prod
+        address: 10.0.0.52
+        port: 8080
+        weight: 1
+        state: present
+  roles:
+    - role: traefik
+
 - name: Dataset deleted
   hosts: baremetal
   tags:
