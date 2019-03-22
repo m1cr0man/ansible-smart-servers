@@ -13,10 +13,10 @@ tar xzf /var/tmp/platform-latest.tgz
 
 echo 'Installing new platform'
 
-NEW_VERSION=$(echo platform-* | cut -d- -f2)
+NEW_VERSION=$(echo platform-* | xargs -n1 echo | sed 's/platform-//' | sort | tail -1)
 OLD_VERSION=$(uname -v | cut -d_ -f2)
 
-mv /mnt/platform{,-$OLD_VERSION}
+test ! -e /mnt/platform || mv /mnt/platform{,-$OLD_VERSION}
 mv /mnt/platform{-$NEW_VERSION,}
 
 cd /var/tmp

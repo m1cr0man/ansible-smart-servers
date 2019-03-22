@@ -9,7 +9,7 @@
     dest: /etc/ssh/sshd_config
     backup: yes
     mode: 0644
-    validate: bash -c "test '{{ is_gz }}' = 'True' || sshd -t -f %s"
+    validate: bash -c "test '{{ is_gz }}' = 'True' || $(test -e /usr/lib/ssh/sshd && echo /usr/lib/ssh/)sshd -t -f %s"
 
 - name: service restarted (Alpine)
   tags:

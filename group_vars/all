@@ -1,7 +1,7 @@
 ---
 ansible_python_interpreter: python
 is_gz: no
-vmadm_image_uuid: 038c1972-8147-11e8-9201-7fbba6e573a0
+vmadm_image_uuid: c193a558-1d63-11e9-97cf-97bb3ee5c14f
 resolvers:
   - 8.8.8.8
   - 8.8.4.4
@@ -22,4 +22,4 @@ smf_install_dir: /opt/custom/smf
 config_dir: /opt/custom/etc
 default_path: /opt/custom/bin:/usr/local/sbin:/usr/local/bin:/opt/local/sbin:/opt/local/bin:/opt/tools/bin:/opt/tools/sbin:/usr/sbin:/usr/bin:/sbin:/usr/ccs/bin
 http_services: []
-brand: lx
+brand: joyent
