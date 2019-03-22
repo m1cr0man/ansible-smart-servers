@@ -1,18 +1,94 @@
 ---
 - name: OpenJDK installed
+  tags:
+    - deploy
   package:
     name: openjdk8
     state: present
 
 - name: Modpack downloaded
-  register: modpack
+  register: modpack_download
+  tags:
+    - deploy
+    - redeploy
   get_url:
     url: "{{ modpack }}"
-    dest: /opt/minecraft/
+    dest: "{{ minecraft_data_dir }}"
+
+- name: Service stopped
+  tags:
+    - redeploy
+  service:
+    name: minecraft
+    state: stopped
+    enabled: no
+  when: modpack_download is changed
 
 - name: Unpack modpack
-  when: modpack is changed
+  tags:
+    - deploy
+    - redeploy
   unarchive:
-    src: "/opt/minecraft/{{ modpack | basename }}"
-    dest: /opt/minecraft/
+    src: "{{ modpack_download.dest }}"
+    dest: "{{ minecraft_data_dir }}"
     remote_src: true
+  when: modpack_download is changed
+
+- name: Set up modpack
+  tags:
+    - deploy
+    - redeploy
+  shell: "{{ modpack_setup }}"
+  args:
+    executable: /bin/bash
+    chdir: "{{ minecraft_data_dir }}"
+  when: modpack_download is changed and modpack_setup is defined
+
+- name: Eula stub copied
+  tags:
+    - deploy
+  template:
+    src: templates/eula.txt
+    dest: "{{ minecraft_data_dir }}/eula.txt"
+    mode: 0644
+
+- name: SMF copied
+  register: minecraft_smf_file
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/minecraft.xml
+    dest: /opt/custom/smf/minecraft.xml
+    mode: 0644
+
+- name: SMF installed
+  register: minecraft_smf_install
+  tags:
+    - deploy
+    - redeploy
+  command: svccfg import minecraft.xml
+  args:
+    chdir: /opt/custom/smf/
+    creates: /var/svc/manifest/site/minecraft.xml
+  when: minecraft_smf_file is changed
+
+- name: Service loaded
+  tags:
+    - deploy
+    - redeploy
+  service:
+    name: minecraft
+    enabled: yes
+  when: minecraft_smf_install is changed
+
+- name: Service restarted
+  tags:
+    - deploy
+    - redeploy
+  service:
+    name: minecraft
+    state: restarted
+    # Also check it's enabled incase it was disabled earlier
+    enabled: yes
+  when: minecraft_smf_file is not changed and modpack_download is changed

@@ -28,7 +28,6 @@ Dependencies:
 
 ## TODO
 
-- Installing Minecraft server
 - Detailed Readme
 - Base zone config
     - mail spooler
