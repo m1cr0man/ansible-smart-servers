@@ -1,5 +1,8 @@
 ---
 - name: Hosts file
+  tags:
+    - deploy
+    - redeploy
   template:
     src: templates/hosts.j2
     dest: /etc/hosts

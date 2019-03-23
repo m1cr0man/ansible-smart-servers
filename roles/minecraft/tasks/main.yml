@@ -3,7 +3,7 @@
   tags:
     - deploy
   package:
-    name: openjdk8
+    name: openjdk-8-jre
     state: present
 
 - name: Modpack downloaded
@@ -52,6 +52,17 @@
     dest: "{{ minecraft_data_dir }}/eula.txt"
     mode: 0644
 
+- name: Service installed
+  tags:
+    - deploy
+    - redeploy
+  template:
+    src: templates/minecraft.service
+    dest: /etc/systemd/system/minecraft.service
+    backup: no
+    mode: 0755
+  when: brand != 'joyent'
+
 - name: SMF copied
   register: minecraft_smf_file
   tags:
@@ -61,6 +72,7 @@
     src: templates/minecraft.xml
     dest: /opt/custom/smf/minecraft.xml
     mode: 0644
+  when: brand == 'joyent'
 
 - name: SMF installed
   register: minecraft_smf_install
@@ -71,7 +83,7 @@
   args:
     chdir: /opt/custom/smf/
     creates: /var/svc/manifest/site/minecraft.xml
-  when: minecraft_smf_file is changed
+  when: brand == 'joyent' and minecraft_smf_file is changed
 
 - name: Service loaded
   tags:
@@ -80,7 +92,18 @@
   service:
     name: minecraft
     enabled: yes
-  when: minecraft_smf_install is changed
+  when: brand == 'joyent' and minecraft_smf_install is changed
+
+- name: Service started
+  tags:
+    - deploy
+    - redeploy
+  systemd:
+    name: minecraft
+    enabled: yes
+    daemon_reload: yes
+    state: started
+  when: brand != 'joyent'
 
 - name: Service restarted
   tags:

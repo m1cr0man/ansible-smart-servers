@@ -39,12 +39,13 @@
   hosts: khargi_mc
   vars:
     minecraft_data_dir: /khargi_mc
-    minecraft_server_jar: minecraft_server.1.12.2.jar
+    minecraft_server_jar: FTBserver-1.12.2-14.23.5.2796-universal.jar
     modpack: 'https://media.forgecdn.net/files/2658/240/FTBRevelationServer_2.7.0.zip'
     modpack_setup: |
       bash ./FTBInstall.sh
   roles:
     - role: basic
+    - role: hostsfile
     - role: ssh
     - role: rsyslog
     - role: minecraft

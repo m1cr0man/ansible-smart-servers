@@ -23,7 +23,7 @@
         <envvar name='PWD' value='{{ minecraft_data_dir }}'/>
       </method_environment>
     </method_context>
-    <exec_method name='start' type='method' exec='java -server -Xmx{{ vmadm_ram - 256 }}M -Xms{{ vmadm_ram - 256 }}M -jar {{ minecraft_server_jar }} nogui' timeout_seconds='30'/>
+    <exec_method name='start' type='method' exec='java -server -Xmx{{ vmadm_ram - 64 }}M -Xms{{ vmadm_ram - 64 }}M -jar {{ minecraft_server_jar }} nogui' timeout_seconds='30'/>
     <exec_method name='stop' type='method' exec=':kill -TERM' timeout_seconds='30'/>
     <property_group name='startd' type='framework'>
       <propval name='duration' type='astring' value='child'/>

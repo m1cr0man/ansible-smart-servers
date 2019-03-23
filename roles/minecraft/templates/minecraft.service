@@ -1,0 +1,10 @@
+[Unit]
+Description=Minecraft Server
+
+[Service]
+WorkingDirectory={{ minecraft_data_dir }}
+ExecStart=/usr/bin/java -server -Xmx{{ vmadm_ram - 64 }}M -Xms{{ vmadm_ram - 64 }}M -jar {{ minecraft_server_jar }} nogui
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
