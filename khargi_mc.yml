@@ -22,7 +22,7 @@
     ports:
       - id: khargi_mc
         src: 25575
-        dest: 25565
+        dest: 25575
   roles:
     - role: zone
       delegate_to: "{{ groups.baremetal[0] }}"
@@ -35,21 +35,6 @@
   roles:
     - role: python
 
-- name: Zone configured
-  hosts: khargi_mc
-  vars:
-    minecraft_data_dir: /khargi_mc
-    minecraft_server_jar: FTBserver-1.12.2-14.23.5.2796-universal.jar
-    modpack: 'https://media.forgecdn.net/files/2658/240/FTBRevelationServer_2.7.0.zip'
-    modpack_setup: |
-      bash ./FTBInstall.sh
-  roles:
-    - role: basic
-    - role: hostsfile
-    - role: ssh
-    - role: rsyslog
-    - role: minecraft
-
 - name: Dataset deleted
   hosts: baremetal
   tags:
@@ -58,3 +43,16 @@
     - zfs:
         name: "{{ global_data_dataset }}/khargi_mc"
         state: absent
+
+- name: Zone configured
+  hosts: khargi_mc
+  vars:
+    minecraft_data_dir: /khargi_mc
+    minecraft_server_jar: forge-1.12.2-14.23.5.2823-universal.jar
+    modpack: 'http://10.0.0.5:9000/public/Khargis-Khonundrum-Server-1.0.4.zip'
+  roles:
+    - role: basic
+    - role: hostsfile
+    - role: ssh
+    - role: rsyslog
+    - role: minecraft

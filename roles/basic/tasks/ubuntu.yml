@@ -7,3 +7,11 @@
     update_cache: yes
     upgrade: full
     autoclean: yes
+
+- name: Packages installed
+  tags:
+    - deploy
+  apt:
+    name:
+      - unzip
+    state: present
