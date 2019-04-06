@@ -24,6 +24,31 @@
     enabled: no
   when: modpack_download is changed
 
+- name: Server backed up
+  tags:
+    - redeploy
+  archive:
+    path: "{{ minecraft_data_dir }}"
+    dest: "{{ minecraft_data_dir }}/{{ ansible_hostname }}_minecraft_backup.tar.bz2"
+    exclude_path:
+      - "{{ minecraft_data_dir }}/*.tar.bz2"
+      - "{{ minecraft_data_dir }}/*.zip"
+    format: bz2
+  when: modpack_download is changed
+
+- name: Old contents removed
+  tags:
+    - redeploy
+  file:
+    path: "{{ minecraft_data_dir }}/{{ item }}"
+    state: absent
+  with_items:
+    - mods
+    - config
+    - crash-reports
+    - logs
+  when: modpack_download is changed
+
 - name: Unpack modpack
   tags:
     - deploy
